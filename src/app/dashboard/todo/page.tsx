@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { requireProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { todayISO } from "@/lib/date";
@@ -51,13 +52,13 @@ export default async function TodoPage({
     body = (
       <p className="text-sm text-slate-500">
         Head of Digital Marketing tidak mengisi to-do harian. Lihat{" "}
-        <a href="/dashboard/admin/team" className="underline">
+        <Link href="/dashboard/admin/team" className="underline">
           Ringkasan Tim
-        </a>{" "}
+        </Link>{" "}
         atau isi{" "}
-        <a href="/dashboard/admin/monthly-input" className="underline">
+        <Link href="/dashboard/admin/monthly-input" className="underline">
           Input Bulanan
-        </a>
+        </Link>
         .
       </p>
     );

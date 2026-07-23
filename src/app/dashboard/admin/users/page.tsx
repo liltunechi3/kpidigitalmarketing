@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { requireAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { UserRoleRow } from "@/components/UserRoleRow";
@@ -18,9 +19,9 @@ export default async function UsersPage() {
         <h1 className="text-lg font-semibold text-slate-900">Kelola Anggota Tim</h1>
         <p className="text-sm text-slate-500">
           Anggota baru mendaftar sendiri lewat halaman{" "}
-          <a href="/signup" className="underline">
+          <Link href="/signup" className="underline">
             Daftar
-          </a>
+          </Link>
           . Di sini kamu bisa mengatur role dan hak admin mereka.
         </p>
       </div>
