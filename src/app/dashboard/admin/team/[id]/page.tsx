@@ -1,9 +1,11 @@
 import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { periodeFirstOfMonth, formatMonthLabel, todayISO } from "@/lib/date";
+import { periodeFirstOfMonth, formatMonthLabel, todayISO, lastNMonths } from "@/lib/date";
 import { MonthSelector } from "@/components/MonthSelector";
 import { KpiScoreTable } from "@/components/KpiScoreTable";
+import { KpiScoreVisual } from "@/components/viz/KpiScoreVisual";
+import { MonthlyTrendChart } from "@/components/viz/MonthlyTrendChart";
 import { ROLE_LABELS } from "@/lib/roles";
 import { scoreForProfile } from "@/lib/kpi/teamScores";
 import type { KpiDefinition, Profile } from "@/lib/supabase/types";
@@ -39,6 +41,15 @@ export default async function TeamMemberDetailPage({
 
   const result = await scoreForProfile(supabase, profile as Profile, anchorDate, periode, definitions);
 
+  const months = lastNMonths(anchorDate, 6);
+  const trend = await Promise.all(
+    months.map(async (m) => {
+      const p = periodeFirstOfMonth(m.anchorDate);
+      const r = await scoreForProfile(supabase, profile as Profile, m.anchorDate, p, definitions);
+      return { label: m.label, percent: r.totalBobot > 0 ? (r.total / r.totalBobot) * 100 : 0 };
+    })
+  );
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -51,6 +62,8 @@ export default async function TeamMemberDetailPage({
         <MonthSelector bulan={bulan} basePath={`/dashboard/admin/team/${id}`} />
       </div>
 
+      <KpiScoreVisual result={result} />
+      <MonthlyTrendChart points={trend} />
       <KpiScoreTable result={result} />
     </div>
   );

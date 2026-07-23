@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { monthRange, periodeFirstOfMonth, formatMonthLabel, todayISO } from "@/lib/date";
 import { MonthSelector } from "@/components/MonthSelector";
 import { KpiScoreTable } from "@/components/KpiScoreTable";
+import { KpiScoreVisual } from "@/components/viz/KpiScoreVisual";
 import { MetricOverrideForm } from "@/components/forms/MetricOverrideForm";
 import {
   computeContentCreatorMetrics,
@@ -109,6 +110,7 @@ export default async function ScorePage({
       </div>
 
       {overrideBlock}
+      <KpiScoreVisual result={result} />
       <KpiScoreTable result={result} />
     </div>
   );

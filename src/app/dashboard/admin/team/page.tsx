@@ -5,6 +5,9 @@ import { periodeFirstOfMonth, formatMonthLabel, todayISO } from "@/lib/date";
 import { MonthSelector } from "@/components/MonthSelector";
 import { ROLE_LABELS } from "@/lib/roles";
 import { scoreForProfile } from "@/lib/kpi/teamScores";
+import { scoreStatus, STATUS_COLOR } from "@/lib/kpi/status";
+import { StatTile } from "@/components/viz/StatTile";
+import { TeamBarChart, type TeamBarDatum } from "@/components/viz/TeamBarChart";
 import type { KpiDefinition, Profile } from "@/lib/supabase/types";
 
 export default async function TeamOverviewPage({
@@ -33,6 +36,19 @@ export default async function TeamOverviewPage({
     })
   );
 
+  const withScore = rows.filter((r) => r.result.totalBobot > 0);
+  const percents = withScore.map((r) => (r.result.total / r.result.totalBobot) * 100);
+  const avgPercent = percents.length ? percents.reduce((a, b) => a + b, 0) / percents.length : 0;
+  const goodCount = percents.filter((p) => scoreStatus(p) === "good").length;
+  const criticalCount = percents.filter((p) => scoreStatus(p) === "critical").length;
+
+  const chartData: TeamBarDatum[] = rows.map(({ profile, result }) => ({
+    id: profile.id,
+    name: profile.full_name,
+    role: ROLE_LABELS[profile.role],
+    percent: result.totalBobot > 0 ? (result.total / result.totalBobot) * 100 : null,
+  }));
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -42,6 +58,22 @@ export default async function TeamOverviewPage({
         </div>
         <MonthSelector bulan={bulan} basePath="/dashboard/admin/team" />
       </div>
+
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <StatTile label="Rata-rata Skor Tim" value={`${Math.round(avgPercent)}%`} />
+        <StatTile
+          label="Anggota Berstatus Baik (≥80%)"
+          value={`${goodCount} / ${withScore.length}`}
+          accent={STATUS_COLOR.good}
+        />
+        <StatTile
+          label="Perlu Perhatian (<60%)"
+          value={`${criticalCount} / ${withScore.length}`}
+          accent={STATUS_COLOR.critical}
+        />
+      </div>
+
+      <TeamBarChart data={chartData} bulan={bulan} />
 
       <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
         <table className="w-full text-left text-sm">
@@ -54,37 +86,35 @@ export default async function TeamOverviewPage({
             </tr>
           </thead>
           <tbody>
-            {rows.map(({ profile, result }) => (
-              <tr key={profile.id} className="border-t border-slate-100">
-                <td className="px-3 py-2 font-medium text-slate-900">{profile.full_name}</td>
-                <td className="px-3 py-2 text-slate-500">{ROLE_LABELS[profile.role]}</td>
-                <td className="px-3 py-2">
-                  {result.totalBobot > 0 ? (
-                    <span
-                      className={
-                        result.total / result.totalBobot >= 0.8
-                          ? "font-semibold text-emerald-600"
-                          : result.total / result.totalBobot >= 0.6
-                          ? "font-semibold text-amber-600"
-                          : "font-semibold text-red-600"
-                      }
+            {rows.map(({ profile, result }) => {
+              const percent = result.totalBobot > 0 ? (result.total / result.totalBobot) * 100 : null;
+              return (
+                <tr key={profile.id} className="border-t border-slate-100">
+                  <td className="px-3 py-2 font-medium text-slate-900">{profile.full_name}</td>
+                  <td className="px-3 py-2 text-slate-500">{ROLE_LABELS[profile.role]}</td>
+                  <td className="px-3 py-2">
+                    {percent !== null ? (
+                      <span
+                        className="font-semibold"
+                        style={{ color: STATUS_COLOR[scoreStatus(percent)] }}
+                      >
+                        {result.total.toFixed(1)} / {result.totalBobot}
+                      </span>
+                    ) : (
+                      <span className="text-slate-400">—</span>
+                    )}
+                  </td>
+                  <td className="px-3 py-2">
+                    <Link
+                      href={`/dashboard/admin/team/${profile.id}?bulan=${bulan}`}
+                      className="text-sm font-medium text-slate-700 underline"
                     >
-                      {result.total.toFixed(1)} / {result.totalBobot}
-                    </span>
-                  ) : (
-                    <span className="text-slate-400">—</span>
-                  )}
-                </td>
-                <td className="px-3 py-2">
-                  <Link
-                    href={`/dashboard/admin/team/${profile.id}?bulan=${bulan}`}
-                    className="text-sm font-medium text-slate-700 underline"
-                  >
-                    Detail
-                  </Link>
-                </td>
-              </tr>
-            ))}
+                      Detail
+                    </Link>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
