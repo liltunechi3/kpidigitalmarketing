@@ -1,14 +1,22 @@
 import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { periodeFirstOfMonth, formatMonthLabel, todayISO, lastNMonths } from "@/lib/date";
+import { monthRange, periodeFirstOfMonth, formatMonthLabel, todayISO, lastNMonths } from "@/lib/date";
 import { MonthSelector } from "@/components/MonthSelector";
 import { KpiScoreTable } from "@/components/KpiScoreTable";
 import { KpiScoreVisual } from "@/components/viz/KpiScoreVisual";
 import { MonthlyTrendChart } from "@/components/viz/MonthlyTrendChart";
+import { ActivityLogTable } from "@/components/ActivityLogTable";
 import { ROLE_LABELS } from "@/lib/roles";
 import { scoreForProfile } from "@/lib/kpi/teamScores";
-import type { KpiDefinition, Profile } from "@/lib/supabase/types";
+import type {
+  KpiDefinition,
+  LogContentCreator,
+  LogGraphicDesigner,
+  LogHostLive,
+  MonthlyHodInput,
+  Profile,
+} from "@/lib/supabase/types";
 
 export default async function TeamMemberDetailPage({
   params,
@@ -50,6 +58,50 @@ export default async function TeamMemberDetailPage({
     })
   );
 
+  const role = (profile as Profile).role;
+  const [start, end] = monthRange(anchorDate);
+  let contentCreatorLogs: LogContentCreator[] | undefined;
+  let graphicDesignerLogs: LogGraphicDesigner[] | undefined;
+  let hostLiveLogs: LogHostLive[] | undefined;
+  let hodInput: MonthlyHodInput | null | undefined;
+
+  if (role === "content_creator") {
+    const { data } = await supabase
+      .from("log_content_creator")
+      .select("*")
+      .eq("user_id", id)
+      .gte("tanggal", start)
+      .lte("tanggal", end)
+      .order("tanggal", { ascending: false });
+    contentCreatorLogs = (data as LogContentCreator[]) ?? [];
+  } else if (role === "graphic_designer") {
+    const { data } = await supabase
+      .from("log_graphic_designer")
+      .select("*")
+      .eq("user_id", id)
+      .gte("tanggal", start)
+      .lte("tanggal", end)
+      .order("tanggal", { ascending: false });
+    graphicDesignerLogs = (data as LogGraphicDesigner[]) ?? [];
+  } else if (role === "host_live") {
+    const { data } = await supabase
+      .from("log_host_live")
+      .select("*")
+      .eq("user_id", id)
+      .gte("tanggal", start)
+      .lte("tanggal", end)
+      .order("tanggal", { ascending: false });
+    hostLiveLogs = (data as LogHostLive[]) ?? [];
+  } else {
+    const { data } = await supabase
+      .from("monthly_hod_input")
+      .select("*")
+      .eq("user_id", id)
+      .eq("periode", periode)
+      .maybeSingle();
+    hodInput = data as MonthlyHodInput | null;
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -65,6 +117,17 @@ export default async function TeamMemberDetailPage({
       <KpiScoreVisual result={result} />
       <MonthlyTrendChart points={trend} />
       <KpiScoreTable result={result} />
+
+      <div>
+        <h2 className="mb-2 text-sm font-semibold text-slate-700">Detail Aktivitas Harian</h2>
+        <ActivityLogTable
+          role={role}
+          contentCreatorLogs={contentCreatorLogs}
+          graphicDesignerLogs={graphicDesignerLogs}
+          hostLiveLogs={hostLiveLogs}
+          hodInput={hodInput}
+        />
+      </div>
     </div>
   );
 }
