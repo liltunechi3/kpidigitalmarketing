@@ -31,7 +31,7 @@ export default async function TodoPage({
       .eq("user_id", userId)
       .eq("tanggal", tanggal)
       .maybeSingle();
-    body = <ContentCreatorForm tanggal={tanggal} existing={data as LogContentCreator | null} />;
+    body = <ContentCreatorForm key={tanggal} tanggal={tanggal} existing={data as LogContentCreator | null} />;
   } else if (profile.role === "graphic_designer") {
     const { data } = await supabase
       .from("log_graphic_designer")
@@ -39,7 +39,7 @@ export default async function TodoPage({
       .eq("user_id", userId)
       .eq("tanggal", tanggal)
       .maybeSingle();
-    body = <GraphicDesignerForm tanggal={tanggal} existing={data as LogGraphicDesigner | null} />;
+    body = <GraphicDesignerForm key={tanggal} tanggal={tanggal} existing={data as LogGraphicDesigner | null} />;
   } else if (profile.role === "host_live") {
     const { data } = await supabase
       .from("log_host_live")
@@ -47,7 +47,7 @@ export default async function TodoPage({
       .eq("user_id", userId)
       .eq("tanggal", tanggal)
       .order("created_at", { ascending: true });
-    body = <HostLiveForm tanggal={tanggal} sessions={(data as LogHostLive[] | null) ?? []} />;
+    body = <HostLiveForm key={tanggal} tanggal={tanggal} sessions={(data as LogHostLive[] | null) ?? []} />;
   } else {
     body = (
       <p className="text-sm text-slate-500">

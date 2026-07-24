@@ -99,6 +99,47 @@ export async function addHostLiveSession(input: {
   revalidatePath("/dashboard/score");
 }
 
+export async function updateHostLiveSession(
+  id: string,
+  input: {
+    jam_live: string;
+    konsep: string;
+    lokasi_live: string;
+    durasi_jam: number;
+    unique_views: number;
+    new_followers: number;
+    lead_masuk: number;
+    active_viewers: number;
+    jumlah_video: number;
+    bukti_link: string;
+  }
+) {
+  const { userId } = await requireProfile();
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("log_host_live")
+    .update({
+      jam_live: input.jam_live || null,
+      konsep: input.konsep || null,
+      lokasi_live: input.lokasi_live || null,
+      durasi_jam: input.durasi_jam,
+      unique_views: input.unique_views,
+      new_followers: input.new_followers,
+      lead_masuk: input.lead_masuk,
+      active_viewers: input.active_viewers,
+      jumlah_video: input.jumlah_video,
+      bukti_link: input.bukti_link || null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .eq("user_id", userId);
+
+  if (error) throw new Error(error.message);
+  revalidatePath("/dashboard/todo");
+  revalidatePath("/dashboard/score");
+}
+
 export async function deleteHostLiveSession(id: string) {
   const { userId } = await requireProfile();
   const supabase = await createClient();

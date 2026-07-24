@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { addHostLiveSession, deleteHostLiveSession } from "@/app/dashboard/todo/actions";
+import { addHostLiveSession, deleteHostLiveSession, updateHostLiveSession } from "@/app/dashboard/todo/actions";
 import type { LogHostLive } from "@/lib/supabase/types";
 
 const emptyForm = {
@@ -25,6 +25,7 @@ export function HostLiveForm({
   sessions: LogHostLive[];
 }) {
   const [form, setForm] = useState(emptyForm);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const [saved, setSaved] = useState(false);
 
@@ -32,10 +33,37 @@ export function HostLiveForm({
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
-  function handleAdd() {
+  function handleEdit(session: LogHostLive) {
+    setSaved(false);
+    setEditingId(session.id);
+    setForm({
+      jam_live: session.jam_live ?? "",
+      konsep: session.konsep ?? "",
+      lokasi_live: session.lokasi_live ?? "",
+      durasi_jam: session.durasi_jam,
+      unique_views: session.unique_views,
+      new_followers: session.new_followers,
+      lead_masuk: session.lead_masuk,
+      active_viewers: session.active_viewers,
+      jumlah_video: session.jumlah_video,
+      bukti_link: session.bukti_link ?? "",
+    });
+  }
+
+  function handleCancelEdit() {
+    setEditingId(null);
+    setForm(emptyForm);
+  }
+
+  function handleSave() {
     setSaved(false);
     startTransition(async () => {
-      await addHostLiveSession({ tanggal, ...form });
+      if (editingId) {
+        await updateHostLiveSession(editingId, form);
+        setEditingId(null);
+      } else {
+        await addHostLiveSession({ tanggal, ...form });
+      }
       setForm(emptyForm);
       setSaved(true);
     });
@@ -44,6 +72,7 @@ export function HostLiveForm({
   function handleDelete(id: string) {
     startTransition(async () => {
       await deleteHostLiveSession(id);
+      if (editingId === id) handleCancelEdit();
     });
   }
 
@@ -75,12 +104,20 @@ export function HostLiveForm({
                   <td className="px-3 py-2">{s.lead_masuk}</td>
                   <td className="px-3 py-2">{s.jumlah_video}</td>
                   <td className="px-3 py-2">
-                    <button
-                      onClick={() => handleDelete(s.id)}
-                      className="text-xs text-red-600 underline"
-                    >
-                      Hapus
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleEdit(s)}
+                        className="text-xs text-slate-700 underline"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(s.id)}
+                        className="text-xs text-red-600 underline"
+                      >
+                        Hapus
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -90,7 +127,9 @@ export function HostLiveForm({
       )}
 
       <div className="space-y-4 rounded-xl border border-slate-200 bg-white p-5">
-        <p className="text-sm font-medium text-slate-700">Tambah Sesi Live</p>
+        <p className="text-sm font-medium text-slate-700">
+          {editingId ? "Edit Sesi Live" : "Tambah Sesi Live"}
+        </p>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="mb-1 block text-sm text-slate-700">Jam Live</label>
@@ -192,12 +231,22 @@ export function HostLiveForm({
         <div className="flex items-center gap-3">
           <button
             type="button"
-            onClick={handleAdd}
+            onClick={handleSave}
             disabled={pending}
             className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50"
           >
-            {pending ? "Menyimpan..." : "Tambah Sesi"}
+            {pending ? "Menyimpan..." : editingId ? "Simpan Perubahan" : "Tambah Sesi"}
           </button>
+          {editingId && (
+            <button
+              type="button"
+              onClick={handleCancelEdit}
+              disabled={pending}
+              className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-50"
+            >
+              Batal
+            </button>
+          )}
           {saved && !pending && <span className="text-sm text-emerald-600">Tersimpan ✓</span>}
         </div>
       </div>
