@@ -193,9 +193,9 @@ export function ActivityLogTable({
         <p className="font-semibold text-slate-900">{hodInput.produktivitas_tim}%</p>
       </div>
       <div>
-        <p className="text-xs text-slate-500">Budget Marketing</p>
+        <p className="text-xs text-slate-500">Efisiensi Budget</p>
         <p className="font-semibold text-slate-900">
-          Rp {hodInput.total_budget.toLocaleString("id-ID")}
+          Rp {hodInput.total_budget.toLocaleString("id-ID")}/lead
         </p>
       </div>
       {hodInput.catatan && (

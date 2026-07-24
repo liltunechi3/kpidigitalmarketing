@@ -76,7 +76,7 @@ export function HodMonthlyInputForm({
         </div>
         <div>
           <label className="mb-1 block text-sm font-medium text-slate-700">
-            Total Budget Marketing (Rp)
+            Efisiensi Budget (Rp/Lead)
           </label>
           <input
             type="number"

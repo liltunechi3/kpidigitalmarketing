@@ -104,13 +104,14 @@ export function computeHodMetrics(input: MonthlyHodInput | null): MetricValues {
   }
   const conversionSurvey =
     input.pencapaian_leads > 0 ? (input.total_survey / input.pencapaian_leads) * 100 : 0;
-  const budgetPerLead = input.pencapaian_leads > 0 ? input.total_budget / input.pencapaian_leads : 0;
 
   return {
     hod_pencapaian_leads: input.pencapaian_leads,
     hod_conversion_survey: conversionSurvey,
     hod_produktivitas_tim: input.produktivitas_tim,
-    hod_budget_efektivitas: budgetPerLead,
+    // total_budget stores the Rp/lead efficiency figure directly (entered by
+    // the HOD as-is), not an aggregate spend to be divided by leads.
+    hod_budget_efektivitas: input.total_budget,
   };
 }
 
