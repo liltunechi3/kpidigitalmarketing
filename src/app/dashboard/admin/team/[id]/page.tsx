@@ -47,59 +47,67 @@ export default async function TeamMemberDetailPage({
     .eq("role", (profile as Profile).role);
   const definitions = (defs as KpiDefinition[]) ?? [];
 
-  const result = await scoreForProfile(supabase, profile as Profile, anchorDate, periode, definitions);
-
-  const months = lastNMonths(anchorDate, 6);
-  const trend = await Promise.all(
-    months.map(async (m) => {
-      const p = periodeFirstOfMonth(m.anchorDate);
-      const r = await scoreForProfile(supabase, profile as Profile, m.anchorDate, p, definitions);
-      return { label: m.label, percent: r.totalBobot > 0 ? (r.total / r.totalBobot) * 100 : 0 };
-    })
-  );
-
   const role = (profile as Profile).role;
   const [start, end] = monthRange(anchorDate);
+  const months = lastNMonths(anchorDate, 6);
+
+  const logsQuery =
+    role === "content_creator"
+      ? supabase
+          .from("log_content_creator")
+          .select("*")
+          .eq("user_id", id)
+          .gte("tanggal", start)
+          .lte("tanggal", end)
+          .order("tanggal", { ascending: false })
+      : role === "graphic_designer"
+        ? supabase
+            .from("log_graphic_designer")
+            .select("*")
+            .eq("user_id", id)
+            .gte("tanggal", start)
+            .lte("tanggal", end)
+            .order("tanggal", { ascending: false })
+        : role === "host_live"
+          ? supabase
+              .from("log_host_live")
+              .select("*")
+              .eq("user_id", id)
+              .gte("tanggal", start)
+              .lte("tanggal", end)
+              .order("tanggal", { ascending: false })
+          : supabase
+              .from("monthly_hod_input")
+              .select("*")
+              .eq("user_id", id)
+              .eq("periode", periode)
+              .maybeSingle();
+
+  const [result, trend, { data: logsData }] = await Promise.all([
+    scoreForProfile(supabase, profile as Profile, anchorDate, periode, definitions),
+    Promise.all(
+      months.map(async (m) => {
+        const p = periodeFirstOfMonth(m.anchorDate);
+        const r = await scoreForProfile(supabase, profile as Profile, m.anchorDate, p, definitions);
+        return { label: m.label, percent: r.totalBobot > 0 ? (r.total / r.totalBobot) * 100 : 0 };
+      })
+    ),
+    logsQuery,
+  ]);
+
   let contentCreatorLogs: LogContentCreator[] | undefined;
   let graphicDesignerLogs: LogGraphicDesigner[] | undefined;
   let hostLiveLogs: LogHostLive[] | undefined;
   let hodInput: MonthlyHodInput | null | undefined;
 
   if (role === "content_creator") {
-    const { data } = await supabase
-      .from("log_content_creator")
-      .select("*")
-      .eq("user_id", id)
-      .gte("tanggal", start)
-      .lte("tanggal", end)
-      .order("tanggal", { ascending: false });
-    contentCreatorLogs = (data as LogContentCreator[]) ?? [];
+    contentCreatorLogs = (logsData as LogContentCreator[]) ?? [];
   } else if (role === "graphic_designer") {
-    const { data } = await supabase
-      .from("log_graphic_designer")
-      .select("*")
-      .eq("user_id", id)
-      .gte("tanggal", start)
-      .lte("tanggal", end)
-      .order("tanggal", { ascending: false });
-    graphicDesignerLogs = (data as LogGraphicDesigner[]) ?? [];
+    graphicDesignerLogs = (logsData as LogGraphicDesigner[]) ?? [];
   } else if (role === "host_live") {
-    const { data } = await supabase
-      .from("log_host_live")
-      .select("*")
-      .eq("user_id", id)
-      .gte("tanggal", start)
-      .lte("tanggal", end)
-      .order("tanggal", { ascending: false });
-    hostLiveLogs = (data as LogHostLive[]) ?? [];
+    hostLiveLogs = (logsData as LogHostLive[]) ?? [];
   } else {
-    const { data } = await supabase
-      .from("monthly_hod_input")
-      .select("*")
-      .eq("user_id", id)
-      .eq("periode", periode)
-      .maybeSingle();
-    hodInput = data as MonthlyHodInput | null;
+    hodInput = logsData as MonthlyHodInput | null;
   }
 
   return (

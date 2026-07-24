@@ -27,25 +27,68 @@ export default async function ScorePage({
   const periode = periodeFirstOfMonth(anchorDate);
   const supabase = await createClient();
 
-  const { data: defs } = await supabase
+  const [start, end] = monthRange(anchorDate);
+
+  const defsQuery = supabase
     .from("kpi_definitions")
     .select("*")
     .eq("role", profile.role)
     .order("urutan", { ascending: true });
+
+  const overrideQuery =
+    profile.role === "content_creator"
+      ? supabase
+          .from("monthly_metric_overrides")
+          .select("*")
+          .eq("user_id", userId)
+          .eq("periode", periode)
+          .eq("metric_key", "cc_engagement_rate")
+          .maybeSingle()
+      : Promise.resolve({ data: null });
+
+  const logsQuery =
+    profile.role === "content_creator"
+      ? supabase
+          .from("log_content_creator")
+          .select("*")
+          .eq("user_id", userId)
+          .gte("tanggal", start)
+          .lte("tanggal", end)
+          .order("tanggal", { ascending: false })
+      : profile.role === "graphic_designer"
+        ? supabase
+            .from("log_graphic_designer")
+            .select("*")
+            .eq("user_id", userId)
+            .gte("tanggal", start)
+            .lte("tanggal", end)
+            .order("tanggal", { ascending: false })
+        : profile.role === "host_live"
+          ? supabase
+              .from("log_host_live")
+              .select("*")
+              .eq("user_id", userId)
+              .gte("tanggal", start)
+              .lte("tanggal", end)
+              .order("tanggal", { ascending: false })
+          : supabase
+              .from("monthly_hod_input")
+              .select("*")
+              .eq("user_id", userId)
+              .eq("periode", periode)
+              .maybeSingle();
+
+  const [{ data: defs }, { data: override }, { data: logsData }] = await Promise.all([
+    defsQuery,
+    overrideQuery,
+    logsQuery,
+  ]);
   const definitions = (defs as KpiDefinition[]) ?? [];
 
   const result = await scoreForProfile(supabase, profile, anchorDate, periode, definitions);
 
   let overrideBlock: React.ReactNode = null;
   if (profile.role === "content_creator") {
-    const { data: override } = await supabase
-      .from("monthly_metric_overrides")
-      .select("*")
-      .eq("user_id", userId)
-      .eq("periode", periode)
-      .eq("metric_key", "cc_engagement_rate")
-      .maybeSingle();
-
     overrideBlock = (
       <MetricOverrideForm
         periode={periode}
@@ -57,47 +100,19 @@ export default async function ScorePage({
     );
   }
 
-  const [start, end] = monthRange(anchorDate);
   let contentCreatorLogs: LogContentCreator[] | undefined;
   let graphicDesignerLogs: LogGraphicDesigner[] | undefined;
   let hostLiveLogs: LogHostLive[] | undefined;
   let hodInput: MonthlyHodInput | null | undefined;
 
   if (profile.role === "content_creator") {
-    const { data } = await supabase
-      .from("log_content_creator")
-      .select("*")
-      .eq("user_id", userId)
-      .gte("tanggal", start)
-      .lte("tanggal", end)
-      .order("tanggal", { ascending: false });
-    contentCreatorLogs = (data as LogContentCreator[]) ?? [];
+    contentCreatorLogs = (logsData as LogContentCreator[]) ?? [];
   } else if (profile.role === "graphic_designer") {
-    const { data } = await supabase
-      .from("log_graphic_designer")
-      .select("*")
-      .eq("user_id", userId)
-      .gte("tanggal", start)
-      .lte("tanggal", end)
-      .order("tanggal", { ascending: false });
-    graphicDesignerLogs = (data as LogGraphicDesigner[]) ?? [];
+    graphicDesignerLogs = (logsData as LogGraphicDesigner[]) ?? [];
   } else if (profile.role === "host_live") {
-    const { data } = await supabase
-      .from("log_host_live")
-      .select("*")
-      .eq("user_id", userId)
-      .gte("tanggal", start)
-      .lte("tanggal", end)
-      .order("tanggal", { ascending: false });
-    hostLiveLogs = (data as LogHostLive[]) ?? [];
+    hostLiveLogs = (logsData as LogHostLive[]) ?? [];
   } else {
-    const { data } = await supabase
-      .from("monthly_hod_input")
-      .select("*")
-      .eq("user_id", userId)
-      .eq("periode", periode)
-      .maybeSingle();
-    hodInput = data as MonthlyHodInput | null;
+    hodInput = logsData as MonthlyHodInput | null;
   }
 
   return (

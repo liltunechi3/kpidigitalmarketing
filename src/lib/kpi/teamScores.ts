@@ -29,48 +29,68 @@ export async function scoreForProfile(
   const [start, end] = monthRange(anchorDate);
   const definitions = allDefinitions.filter((d) => d.role === profile.role);
 
-  let metrics: Record<string, number> = {};
-
-  if (profile.role === "content_creator") {
-    const { data: logs } = await supabase
-      .from("log_content_creator")
-      .select("*")
-      .eq("user_id", profile.id)
-      .gte("tanggal", start)
-      .lte("tanggal", end);
-    metrics = computeContentCreatorMetrics((logs as LogContentCreator[]) ?? []);
-  } else if (profile.role === "graphic_designer") {
-    const { data: logs } = await supabase
-      .from("log_graphic_designer")
-      .select("*")
-      .eq("user_id", profile.id)
-      .gte("tanggal", start)
-      .lte("tanggal", end);
-    metrics = computeGraphicDesignerMetrics((logs as LogGraphicDesigner[]) ?? []);
-  } else if (profile.role === "host_live") {
-    const { data: logs } = await supabase
-      .from("log_host_live")
-      .select("*")
-      .eq("user_id", profile.id)
-      .gte("tanggal", start)
-      .lte("tanggal", end);
-    metrics = computeHostLiveMetrics((logs as LogHostLive[]) ?? []);
-  } else {
-    const { data: input } = await supabase
-      .from("monthly_hod_input")
-      .select("*")
-      .eq("user_id", profile.id)
-      .eq("periode", periode)
-      .maybeSingle();
-    metrics = computeHodMetrics(input as MonthlyHodInput | null);
-  }
-
-  const { data: overrides } = await supabase
+  const overridesQuery = supabase
     .from("monthly_metric_overrides")
     .select("metric_key, value")
     .eq("user_id", profile.id)
     .eq("periode", periode);
-  metrics = applyMetricOverrides(metrics, overrides ?? []);
+
+  let metrics: Record<string, number> = {};
+
+  if (profile.role === "content_creator") {
+    const [{ data: logs }, { data: overrides }] = await Promise.all([
+      supabase
+        .from("log_content_creator")
+        .select("*")
+        .eq("user_id", profile.id)
+        .gte("tanggal", start)
+        .lte("tanggal", end),
+      overridesQuery,
+    ]);
+    metrics = applyMetricOverrides(
+      computeContentCreatorMetrics((logs as LogContentCreator[]) ?? []),
+      overrides ?? []
+    );
+  } else if (profile.role === "graphic_designer") {
+    const [{ data: logs }, { data: overrides }] = await Promise.all([
+      supabase
+        .from("log_graphic_designer")
+        .select("*")
+        .eq("user_id", profile.id)
+        .gte("tanggal", start)
+        .lte("tanggal", end),
+      overridesQuery,
+    ]);
+    metrics = applyMetricOverrides(
+      computeGraphicDesignerMetrics((logs as LogGraphicDesigner[]) ?? []),
+      overrides ?? []
+    );
+  } else if (profile.role === "host_live") {
+    const [{ data: logs }, { data: overrides }] = await Promise.all([
+      supabase
+        .from("log_host_live")
+        .select("*")
+        .eq("user_id", profile.id)
+        .gte("tanggal", start)
+        .lte("tanggal", end),
+      overridesQuery,
+    ]);
+    metrics = applyMetricOverrides(
+      computeHostLiveMetrics((logs as LogHostLive[]) ?? []),
+      overrides ?? []
+    );
+  } else {
+    const [{ data: input }, { data: overrides }] = await Promise.all([
+      supabase
+        .from("monthly_hod_input")
+        .select("*")
+        .eq("user_id", profile.id)
+        .eq("periode", periode)
+        .maybeSingle(),
+      overridesQuery,
+    ]);
+    metrics = applyMetricOverrides(computeHodMetrics(input as MonthlyHodInput | null), overrides ?? []);
+  }
 
   return computeKpiScore(definitions, metrics);
 }

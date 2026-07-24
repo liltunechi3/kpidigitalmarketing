@@ -22,11 +22,10 @@ export default async function TeamOverviewPage({
   const periode = periodeFirstOfMonth(anchorDate);
   const supabase = await createClient();
 
-  const { data: profiles } = await supabase
-    .from("profiles")
-    .select("*")
-    .order("full_name", { ascending: true });
-  const { data: defs } = await supabase.from("kpi_definitions").select("*");
+  const [{ data: profiles }, { data: defs }] = await Promise.all([
+    supabase.from("profiles").select("*").order("full_name", { ascending: true }),
+    supabase.from("kpi_definitions").select("*"),
+  ]);
   const definitions = (defs as KpiDefinition[]) ?? [];
 
   const rows = await Promise.all(
