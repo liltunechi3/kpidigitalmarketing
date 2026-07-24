@@ -25,11 +25,10 @@ function isFilled(text: string | null | undefined) {
   return t.length > 0 && t !== "-";
 }
 
-/** Content Creator metrics for a set of daily logs within one month. */
-export function computeContentCreatorMetrics(
-  logs: LogContentCreator[],
-  engagementRateOverride: number
-): MetricValues {
+/** Content Creator metrics for a set of daily logs within one month.
+ * cc_engagement_rate isn't tracked in daily logs; it defaults to 0 here and is
+ * expected to be supplied via a monthly_metric_overrides entry. */
+export function computeContentCreatorMetrics(logs: LogContentCreator[]): MetricValues {
   const produksiKonten = logs.reduce(
     (sum, l) => sum + l.todo_items.filter((t) => isFilled(t.text)).length,
     0
@@ -42,10 +41,22 @@ export function computeContentCreatorMetrics(
   return {
     cc_produksi_konten: produksiKonten,
     cc_konsistensi_upload: konsistensiUpload,
-    cc_engagement_rate: engagementRateOverride,
+    cc_engagement_rate: 0,
     cc_leads: totalLeads,
     cc_revisi_ratio: revisiRatio,
   };
+}
+
+/** Overrides win over computed values for any matching metric_key. */
+export function applyMetricOverrides(
+  metrics: MetricValues,
+  overrides: { metric_key: string; value: number }[]
+): MetricValues {
+  const merged = { ...metrics };
+  for (const o of overrides) {
+    merged[o.metric_key] = o.value;
+  }
+  return merged;
 }
 
 /** Graphic Designer metrics for a set of daily logs within one month. */

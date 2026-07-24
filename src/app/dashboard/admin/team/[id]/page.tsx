@@ -3,7 +3,7 @@ import { requireAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { monthRange, periodeFirstOfMonth, formatMonthLabel, formatPeriodRangeLabel, currentPeriodLabel, lastNMonths } from "@/lib/date";
 import { MonthSelector } from "@/components/MonthSelector";
-import { KpiScoreTable } from "@/components/KpiScoreTable";
+import { EditableKpiScoreTable } from "@/components/EditableKpiScoreTable";
 import { KpiScoreVisual } from "@/components/viz/KpiScoreVisual";
 import { MonthlyTrendChart } from "@/components/viz/MonthlyTrendChart";
 import { ActivityLogTable } from "@/components/ActivityLogTable";
@@ -117,7 +117,7 @@ export default async function TeamMemberDetailPage({
 
       <KpiScoreVisual result={result} />
       <MonthlyTrendChart points={trend} />
-      <KpiScoreTable result={result} />
+      <EditableKpiScoreTable result={result} userId={id} periode={periode} />
 
       <div>
         <h2 className="mb-2 text-sm font-semibold text-slate-700">Detail Aktivitas Harian</h2>

@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { monthRange } from "@/lib/date";
 import {
+  applyMetricOverrides,
   computeContentCreatorMetrics,
   computeGraphicDesignerMetrics,
   computeHostLiveMetrics,
@@ -37,17 +38,7 @@ export async function scoreForProfile(
       .eq("user_id", profile.id)
       .gte("tanggal", start)
       .lte("tanggal", end);
-    const { data: override } = await supabase
-      .from("monthly_metric_overrides")
-      .select("*")
-      .eq("user_id", profile.id)
-      .eq("periode", periode)
-      .eq("metric_key", "cc_engagement_rate")
-      .maybeSingle();
-    metrics = computeContentCreatorMetrics(
-      (logs as LogContentCreator[]) ?? [],
-      override?.value ?? 0
-    );
+    metrics = computeContentCreatorMetrics((logs as LogContentCreator[]) ?? []);
   } else if (profile.role === "graphic_designer") {
     const { data: logs } = await supabase
       .from("log_graphic_designer")
@@ -73,6 +64,13 @@ export async function scoreForProfile(
       .maybeSingle();
     metrics = computeHodMetrics(input as MonthlyHodInput | null);
   }
+
+  const { data: overrides } = await supabase
+    .from("monthly_metric_overrides")
+    .select("metric_key, value")
+    .eq("user_id", profile.id)
+    .eq("periode", periode);
+  metrics = applyMetricOverrides(metrics, overrides ?? []);
 
   return computeKpiScore(definitions, metrics);
 }
