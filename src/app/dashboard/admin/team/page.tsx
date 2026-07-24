@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { periodeFirstOfMonth, formatMonthLabel, todayISO } from "@/lib/date";
+import { periodeFirstOfMonth, formatMonthLabel, formatPeriodRangeLabel, currentPeriodLabel } from "@/lib/date";
 import { MonthSelector } from "@/components/MonthSelector";
 import { ROLE_LABELS } from "@/lib/roles";
 import { scoreForProfile } from "@/lib/kpi/teamScores";
@@ -17,7 +17,7 @@ export default async function TeamOverviewPage({
 }) {
   await requireAdmin();
   const { bulan: bulanParam } = await searchParams;
-  const bulan = bulanParam || todayISO().slice(0, 7);
+  const bulan = bulanParam || currentPeriodLabel();
   const anchorDate = `${bulan}-01`;
   const periode = periodeFirstOfMonth(anchorDate);
   const supabase = await createClient();
@@ -54,7 +54,9 @@ export default async function TeamOverviewPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-lg font-semibold text-slate-900">Ringkasan Tim</h1>
-          <p className="text-sm text-slate-500">{formatMonthLabel(anchorDate)}</p>
+          <p className="text-sm text-slate-500">
+            {formatMonthLabel(anchorDate)} &middot; {formatPeriodRangeLabel(anchorDate)}
+          </p>
         </div>
         <MonthSelector bulan={bulan} basePath="/dashboard/admin/team" />
       </div>

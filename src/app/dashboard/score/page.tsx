@@ -1,6 +1,6 @@
 import { requireProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { monthRange, periodeFirstOfMonth, formatMonthLabel, todayISO } from "@/lib/date";
+import { monthRange, periodeFirstOfMonth, formatMonthLabel, formatPeriodRangeLabel, currentPeriodLabel } from "@/lib/date";
 import { MonthSelector } from "@/components/MonthSelector";
 import { KpiScoreTable } from "@/components/KpiScoreTable";
 import { KpiScoreVisual } from "@/components/viz/KpiScoreVisual";
@@ -27,7 +27,7 @@ export default async function ScorePage({
 }) {
   const { userId, profile } = await requireProfile();
   const { bulan: bulanParam } = await searchParams;
-  const bulan = bulanParam || todayISO().slice(0, 7);
+  const bulan = bulanParam || currentPeriodLabel();
   const anchorDate = `${bulan}-01`;
   const [start, end] = monthRange(anchorDate);
   const periode = periodeFirstOfMonth(anchorDate);
@@ -104,7 +104,9 @@ export default async function ScorePage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-lg font-semibold text-slate-900">Skor KPI Saya</h1>
-          <p className="text-sm text-slate-500">{formatMonthLabel(anchorDate)}</p>
+          <p className="text-sm text-slate-500">
+            {formatMonthLabel(anchorDate)} &middot; {formatPeriodRangeLabel(anchorDate)}
+          </p>
         </div>
         <MonthSelector bulan={bulan} basePath="/dashboard/score" />
       </div>

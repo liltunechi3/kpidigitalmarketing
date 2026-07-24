@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { monthRange, periodeFirstOfMonth, formatMonthLabel, todayISO, lastNMonths } from "@/lib/date";
+import { monthRange, periodeFirstOfMonth, formatMonthLabel, formatPeriodRangeLabel, currentPeriodLabel, lastNMonths } from "@/lib/date";
 import { MonthSelector } from "@/components/MonthSelector";
 import { KpiScoreTable } from "@/components/KpiScoreTable";
 import { KpiScoreVisual } from "@/components/viz/KpiScoreVisual";
@@ -28,7 +28,7 @@ export default async function TeamMemberDetailPage({
   await requireAdmin();
   const { id } = await params;
   const { bulan: bulanParam } = await searchParams;
-  const bulan = bulanParam || todayISO().slice(0, 7);
+  const bulan = bulanParam || currentPeriodLabel();
   const anchorDate = `${bulan}-01`;
   const periode = periodeFirstOfMonth(anchorDate);
   const supabase = await createClient();
@@ -108,7 +108,8 @@ export default async function TeamMemberDetailPage({
         <div>
           <h1 className="text-lg font-semibold text-slate-900">{(profile as Profile).full_name}</h1>
           <p className="text-sm text-slate-500">
-            {ROLE_LABELS[(profile as Profile).role]} &middot; {formatMonthLabel(anchorDate)}
+            {ROLE_LABELS[(profile as Profile).role]} &middot; {formatMonthLabel(anchorDate)}{" "}
+            ({formatPeriodRangeLabel(anchorDate)})
           </p>
         </div>
         <MonthSelector bulan={bulan} basePath={`/dashboard/admin/team/${id}`} />

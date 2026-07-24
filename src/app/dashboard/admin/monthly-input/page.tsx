@@ -1,6 +1,6 @@
 import { requireAdmin } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { periodeFirstOfMonth, formatMonthLabel, todayISO } from "@/lib/date";
+import { periodeFirstOfMonth, formatMonthLabel, formatPeriodRangeLabel, currentPeriodLabel } from "@/lib/date";
 import { MonthSelector } from "@/components/MonthSelector";
 import { HodMonthlyInputForm } from "@/components/forms/HodMonthlyInputForm";
 import type { MonthlyHodInput } from "@/lib/supabase/types";
@@ -12,7 +12,7 @@ export default async function MonthlyInputPage({
 }) {
   const { userId } = await requireAdmin();
   const { bulan: bulanParam } = await searchParams;
-  const bulan = bulanParam || todayISO().slice(0, 7);
+  const bulan = bulanParam || currentPeriodLabel();
   const anchorDate = `${bulan}-01`;
   const periode = periodeFirstOfMonth(anchorDate);
   const supabase = await createClient();
@@ -29,7 +29,9 @@ export default async function MonthlyInputPage({
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-lg font-semibold text-slate-900">Input Bulanan (Head of Digital Marketing)</h1>
-          <p className="text-sm text-slate-500">{formatMonthLabel(anchorDate)}</p>
+          <p className="text-sm text-slate-500">
+            {formatMonthLabel(anchorDate)} &middot; {formatPeriodRangeLabel(anchorDate)}
+          </p>
         </div>
         <MonthSelector bulan={bulan} basePath="/dashboard/admin/monthly-input" />
       </div>
