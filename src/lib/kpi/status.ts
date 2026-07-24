@@ -17,3 +17,14 @@ export function scoreStatus(percent: number): ScoreStatus {
   if (percent >= 60) return "warning";
   return "critical";
 }
+
+/** Kriteria Ketuntasan Minimal (minimum passing score) for KPI achievement. */
+export const KKM_THRESHOLD = 80;
+
+export function meetsKkm(percent: number): boolean {
+  return percent >= KKM_THRESHOLD;
+}
+
+export function kkmLabel(percent: number): string {
+  return meetsKkm(percent) ? "Mencapai KKM" : "Belum Mencapai KKM";
+}
