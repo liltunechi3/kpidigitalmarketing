@@ -1,12 +1,19 @@
 import { requireProfile } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { periodeFirstOfMonth, formatMonthLabel, formatPeriodRangeLabel, currentPeriodLabel } from "@/lib/date";
+import { monthRange, periodeFirstOfMonth, formatMonthLabel, formatPeriodRangeLabel, currentPeriodLabel } from "@/lib/date";
 import { MonthSelector } from "@/components/MonthSelector";
 import { KpiScoreTable } from "@/components/KpiScoreTable";
 import { KpiScoreVisual } from "@/components/viz/KpiScoreVisual";
 import { MetricOverrideForm } from "@/components/forms/MetricOverrideForm";
+import { ActivityLogTable } from "@/components/ActivityLogTable";
 import { scoreForProfile } from "@/lib/kpi/teamScores";
-import type { KpiDefinition } from "@/lib/supabase/types";
+import type {
+  KpiDefinition,
+  LogContentCreator,
+  LogGraphicDesigner,
+  LogHostLive,
+  MonthlyHodInput,
+} from "@/lib/supabase/types";
 
 export default async function ScorePage({
   searchParams,
@@ -50,6 +57,49 @@ export default async function ScorePage({
     );
   }
 
+  const [start, end] = monthRange(anchorDate);
+  let contentCreatorLogs: LogContentCreator[] | undefined;
+  let graphicDesignerLogs: LogGraphicDesigner[] | undefined;
+  let hostLiveLogs: LogHostLive[] | undefined;
+  let hodInput: MonthlyHodInput | null | undefined;
+
+  if (profile.role === "content_creator") {
+    const { data } = await supabase
+      .from("log_content_creator")
+      .select("*")
+      .eq("user_id", userId)
+      .gte("tanggal", start)
+      .lte("tanggal", end)
+      .order("tanggal", { ascending: false });
+    contentCreatorLogs = (data as LogContentCreator[]) ?? [];
+  } else if (profile.role === "graphic_designer") {
+    const { data } = await supabase
+      .from("log_graphic_designer")
+      .select("*")
+      .eq("user_id", userId)
+      .gte("tanggal", start)
+      .lte("tanggal", end)
+      .order("tanggal", { ascending: false });
+    graphicDesignerLogs = (data as LogGraphicDesigner[]) ?? [];
+  } else if (profile.role === "host_live") {
+    const { data } = await supabase
+      .from("log_host_live")
+      .select("*")
+      .eq("user_id", userId)
+      .gte("tanggal", start)
+      .lte("tanggal", end)
+      .order("tanggal", { ascending: false });
+    hostLiveLogs = (data as LogHostLive[]) ?? [];
+  } else {
+    const { data } = await supabase
+      .from("monthly_hod_input")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("periode", periode)
+      .maybeSingle();
+    hodInput = data as MonthlyHodInput | null;
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -65,6 +115,17 @@ export default async function ScorePage({
       {overrideBlock}
       <KpiScoreVisual result={result} />
       <KpiScoreTable result={result} />
+
+      <div>
+        <h2 className="mb-2 text-sm font-semibold text-slate-700">Riwayat Aktivitas Harian</h2>
+        <ActivityLogTable
+          role={profile.role}
+          contentCreatorLogs={contentCreatorLogs}
+          graphicDesignerLogs={graphicDesignerLogs}
+          hostLiveLogs={hostLiveLogs}
+          hodInput={hodInput}
+        />
+      </div>
     </div>
   );
 }
