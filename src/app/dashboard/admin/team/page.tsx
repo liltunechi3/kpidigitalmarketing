@@ -8,6 +8,7 @@ import { scoreForProfile } from "@/lib/kpi/teamScores";
 import { scoreStatus, STATUS_COLOR } from "@/lib/kpi/status";
 import { StatTile } from "@/components/viz/StatTile";
 import { TeamBarChart, type TeamBarDatum } from "@/components/viz/TeamBarChart";
+import { IconDownload } from "@/components/icons";
 import type { KpiDefinition, Profile } from "@/lib/supabase/types";
 
 export default async function TeamOverviewPage({
@@ -57,7 +58,16 @@ export default async function TeamOverviewPage({
             {formatMonthLabel(anchorDate)} &middot; {formatPeriodRangeLabel(anchorDate)}
           </p>
         </div>
-        <MonthSelector bulan={bulan} basePath="/dashboard/admin/team" />
+        <div className="flex items-center gap-2">
+          <a
+            href={`/dashboard/admin/team/report?bulan=${bulan}`}
+            className="flex items-center gap-1.5 rounded-full border border-black/10 bg-white px-3.5 py-1.5 text-sm font-medium text-neutral-700 hover:bg-cream-100 transition"
+          >
+            <IconDownload className="h-3.5 w-3.5" />
+            Export Laporan
+          </a>
+          <MonthSelector bulan={bulan} basePath="/dashboard/admin/team" />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
