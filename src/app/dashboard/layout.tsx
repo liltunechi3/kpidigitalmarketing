@@ -7,7 +7,6 @@ import {
   IconChart,
   IconUsers,
   IconCalendar,
-  IconCalendarCheck,
   IconSliders,
   IconUserPlus,
 } from "@/components/icons";
@@ -25,7 +24,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const adminNav = [
     { href: "/dashboard/admin/team", label: "Ringkasan Tim", icon: <IconUsers className={iconCls} /> },
-    { href: "/dashboard/admin/team/calendar", label: "Kalender Tim", icon: <IconCalendarCheck className={iconCls} /> },
     { href: "/dashboard/admin/monthly-input", label: "Input Bulanan", icon: <IconCalendar className={iconCls} /> },
     { href: "/dashboard/admin/kpi-settings", label: "Pengaturan KPI", icon: <IconSliders className={iconCls} /> },
     { href: "/dashboard/admin/users", label: "Kelola Anggota", icon: <IconUserPlus className={iconCls} /> },

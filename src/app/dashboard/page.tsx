@@ -10,6 +10,7 @@ import {
   lastNMonths,
   daysUntil,
   todayISO,
+  buildPeriodWeeks,
 } from "@/lib/date";
 import { ROLE_LABELS } from "@/lib/roles";
 import { scoreForProfile } from "@/lib/kpi/teamScores";
@@ -19,6 +20,7 @@ import { KpiBar } from "@/components/viz/KpiBar";
 import { StatTile } from "@/components/viz/StatTile";
 import { MonthlyTrendChart } from "@/components/viz/MonthlyTrendChart";
 import { TeamBarChart, type TeamBarDatum } from "@/components/viz/TeamBarChart";
+import { PersonalCalendar } from "@/components/PersonalCalendar";
 import {
   IconChecklist,
   IconChart,
@@ -168,21 +170,13 @@ export default async function DashboardHomePage() {
         ? "log_graphic_designer"
         : "log_host_live";
 
-  const [{ data: defs }, { count: entriesCount }, { count: todayCount }] = await Promise.all([
+  const today = todayISO();
+  const [{ data: defs }, { data: logDates }] = await Promise.all([
     supabase.from("kpi_definitions").select("*").eq("role", profile.role).order("urutan", { ascending: true }),
-    supabase
-      .from(logTable)
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", userId)
-      .gte("tanggal", start)
-      .lte("tanggal", end),
-    supabase
-      .from(logTable)
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", userId)
-      .eq("tanggal", todayISO()),
+    supabase.from(logTable).select("tanggal").eq("user_id", userId).gte("tanggal", start).lte("tanggal", end),
   ]);
   const definitions = (defs as KpiDefinition[]) ?? [];
+  const filledDates = Array.from(new Set(((logDates as { tanggal: string }[]) ?? []).map((r) => r.tanggal)));
 
   const months = lastNMonths(anchorDate, 6);
   const [result, trend] = await Promise.all([
@@ -197,8 +191,14 @@ export default async function DashboardHomePage() {
   ]);
 
   const overallPercent = result.totalBobot > 0 ? (result.total / result.totalBobot) * 100 : 0;
-  const filledToday = (todayCount ?? 0) > 0;
+  const filledToday = filledDates.includes(today);
   const topKpis = result.rows.slice(0, 3);
+
+  const calendarWeeks = buildPeriodWeeks(start, end, today);
+  const totalPeriodDays = calendarWeeks.flat().filter((c) => c.inPeriod).length;
+  const missedCount = calendarWeeks
+    .flat()
+    .filter((c) => c.inPeriod && c.iso <= today && !filledDates.includes(c.iso)).length;
 
   return (
     <div className="space-y-5">
@@ -224,7 +224,7 @@ export default async function DashboardHomePage() {
         />
         <StatTile
           label="Entri Bulan Ini"
-          value={`${entriesCount ?? 0}`}
+          value={`${filledDates.length}`}
           icon={<IconChecklist className="h-3.5 w-3.5" />}
           sub="Hari / sesi terisi"
         />
@@ -275,6 +275,15 @@ export default async function DashboardHomePage() {
           />
         </div>
       </div>
+
+      <PersonalCalendar
+        weeks={calendarWeeks}
+        filledDates={filledDates}
+        todayIso={today}
+        filledCount={filledDates.length}
+        missedCount={missedCount}
+        totalPeriodDays={totalPeriodDays}
+      />
 
       <MonthlyTrendChart points={trend} />
     </div>
