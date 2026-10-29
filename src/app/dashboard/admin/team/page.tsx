@@ -59,13 +59,26 @@ export default async function TeamOverviewPage({
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <a
-            href={`/dashboard/admin/team/report?bulan=${bulan}`}
-            className="flex items-center gap-1.5 rounded-full border border-black/10 bg-white px-3.5 py-1.5 text-sm font-medium text-neutral-700 hover:bg-cream-100 transition"
-          >
-            <IconDownload className="h-3.5 w-3.5" />
-            Export Laporan
-          </a>
+          <details className="group relative">
+            <summary className="flex cursor-pointer list-none select-none items-center gap-1.5 rounded-full border border-black/10 bg-white px-3.5 py-1.5 text-sm font-medium text-neutral-700 transition hover:bg-cream-100 [&::-webkit-details-marker]:hidden">
+              <IconDownload className="h-3.5 w-3.5" />
+              Export Laporan
+            </summary>
+            <div className="absolute right-0 top-full z-10 mt-1.5 w-40 rounded-xl border border-black/10 bg-white p-1 shadow-lg">
+              <a
+                href={`/dashboard/admin/team/report?bulan=${bulan}&format=pdf`}
+                className="block rounded-lg px-3 py-2 text-sm text-neutral-700 hover:bg-cream-100"
+              >
+                PDF (per orang)
+              </a>
+              <a
+                href={`/dashboard/admin/team/report?bulan=${bulan}&format=xlsx`}
+                className="block rounded-lg px-3 py-2 text-sm text-neutral-700 hover:bg-cream-100"
+              >
+                Excel (per role)
+              </a>
+            </div>
+          </details>
           <MonthSelector bulan={bulan} basePath="/dashboard/admin/team" />
         </div>
       </div>

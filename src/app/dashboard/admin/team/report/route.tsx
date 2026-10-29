@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { periodeFirstOfMonth, formatMonthLabel, formatPeriodRangeLabel, currentPeriodLabel } from "@/lib/date";
 import { scoreForProfile } from "@/lib/kpi/teamScores";
 import { MonthlyReportDocument, type MemberReportData } from "@/lib/report/MonthlyReportDocument";
+import { buildMonthlyReportWorkbook } from "@/lib/report/monthlyReportExcel";
 import type { KpiDefinition, Profile } from "@/lib/supabase/types";
 
 export async function GET(request: Request) {
@@ -12,6 +13,7 @@ export async function GET(request: Request) {
 
   const { searchParams } = new URL(request.url);
   const bulan = searchParams.get("bulan") || currentPeriodLabel();
+  const format = searchParams.get("format") === "xlsx" ? "xlsx" : "pdf";
   const anchorDate = `${bulan}-01`;
   const periode = periodeFirstOfMonth(anchorDate);
 
@@ -28,12 +30,23 @@ export async function GET(request: Request) {
     })
   );
 
+  const bulanLabel = formatMonthLabel(anchorDate);
+  const periodeRangeLabel = formatPeriodRangeLabel(anchorDate);
+
+  if (format === "xlsx") {
+    const workbook = await buildMonthlyReportWorkbook(members, bulanLabel, periodeRangeLabel);
+    const buffer = await workbook.xlsx.writeBuffer();
+
+    return new Response(new Uint8Array(buffer), {
+      headers: {
+        "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        "Content-Disposition": `attachment; filename="laporan-kpi-${bulan}.xlsx"`,
+      },
+    });
+  }
+
   const buffer = await renderToBuffer(
-    <MonthlyReportDocument
-      members={members}
-      bulanLabel={formatMonthLabel(anchorDate)}
-      periodeRangeLabel={formatPeriodRangeLabel(anchorDate)}
-    />
+    <MonthlyReportDocument members={members} bulanLabel={bulanLabel} periodeRangeLabel={periodeRangeLabel} />
   );
 
   return new Response(new Uint8Array(buffer), {
