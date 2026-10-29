@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { IconFlame } from "@/components/icons";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -35,8 +34,8 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-cream-50 via-cream-50 to-cream-200 px-4">
       <div className="w-full max-w-sm">
         <div className="mb-6 flex flex-col items-center gap-2">
-          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-ink text-accent">
-            <IconFlame className="h-5 w-5" />
+          <span className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-2xl">
+            <img src="/brand-mark.png" alt="KPI Digital Marketing" className="h-full w-full object-cover" />
           </span>
         </div>
         <div className="rounded-2xl border border-black/[0.06] bg-white p-8 shadow-[0_1px_2px_rgba(16,15,10,0.04),0_16px_40px_-20px_rgba(16,15,10,0.35)]">

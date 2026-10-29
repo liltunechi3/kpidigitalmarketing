@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { SidebarSignOut } from "@/components/SidebarSignOut";
-import { IconBell, IconFlame } from "@/components/icons";
+import { IconBell } from "@/components/icons";
 
 type NavItem = {
   href: string;
@@ -38,8 +38,8 @@ export function TopNav({
       <header className="sticky top-4 z-30 mx-4 mt-4 hidden md:block">
         <div className="mx-auto flex max-w-7xl items-center gap-3 rounded-2xl border border-black/[0.06] bg-white/90 px-4 py-2.5 shadow-[0_1px_2px_rgba(16,15,10,0.05),0_12px_32px_-18px_rgba(16,15,10,0.35)] backdrop-blur">
           <Link href="/dashboard" className="flex shrink-0 items-center gap-2 pr-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-ink text-accent">
-              <IconFlame className="h-4 w-4" />
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-xl">
+              <img src="/brand-mark.png" alt="" className="h-full w-full object-cover" />
             </span>
             <span className="hidden text-sm font-semibold tracking-tight text-neutral-900 lg:inline">
               KPI Digital
@@ -95,8 +95,8 @@ export function TopNav({
       <header className="sticky top-0 z-30 border-b border-black/[0.06] bg-white/95 backdrop-blur md:hidden">
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-ink text-accent">
-              <IconFlame className="h-4 w-4" />
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-xl">
+              <img src="/brand-mark.png" alt="" className="h-full w-full object-cover" />
             </span>
             <div>
               <p className="text-sm font-semibold text-neutral-900">KPI Digital Marketing</p>
