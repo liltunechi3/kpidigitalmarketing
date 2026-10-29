@@ -70,6 +70,46 @@ export function daysUntil(dateISO: string): number {
   return Math.round((target.getTime() - today.getTime()) / 86_400_000);
 }
 
+export type PeriodDayCell = {
+  iso: string;
+  day: number;
+  inPeriod: boolean;
+  isToday: boolean;
+};
+
+/** Mon-Sun week grid covering [start, end] (inclusive), padded to full weeks. */
+export function buildPeriodWeeks(start: string, end: string, todayIso: string): PeriodDayCell[][] {
+  const [sy, sm, sd] = start.split("-").map(Number);
+  const [ey, em, ed] = end.split("-").map(Number);
+  const startDate = new Date(sy, sm - 1, sd);
+  const endDate = new Date(ey, em - 1, ed);
+
+  const startDow = (startDate.getDay() + 6) % 7; // 0 = Monday
+  const gridStart = new Date(startDate);
+  gridStart.setDate(gridStart.getDate() - startDow);
+
+  const endDow = (endDate.getDay() + 6) % 7;
+  const gridEnd = new Date(endDate);
+  gridEnd.setDate(gridEnd.getDate() + (6 - endDow));
+
+  const cells: PeriodDayCell[] = [];
+  const cur = new Date(gridStart);
+  while (cur <= gridEnd) {
+    const iso = `${cur.getFullYear()}-${String(cur.getMonth() + 1).padStart(2, "0")}-${String(cur.getDate()).padStart(2, "0")}`;
+    cells.push({
+      iso,
+      day: cur.getDate(),
+      inPeriod: iso >= start && iso <= end,
+      isToday: iso === todayIso,
+    });
+    cur.setDate(cur.getDate() + 1);
+  }
+
+  const weeks: PeriodDayCell[][] = [];
+  for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
+  return weeks;
+}
+
 /** Last n months up to and including anchorDate's month, oldest first. */
 export function lastNMonths(anchorDate: string, n: number): { anchorDate: string; label: string }[] {
   const [y, m] = anchorDate.split("-").map(Number);
