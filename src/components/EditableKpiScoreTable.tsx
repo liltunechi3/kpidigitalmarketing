@@ -43,9 +43,9 @@ export function EditableKpiScoreTable({
   }
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
+    <div className="overflow-x-auto rounded-2xl border border-black/[0.06] bg-white shadow-[0_1px_2px_rgba(16,15,10,0.04),0_10px_28px_-16px_rgba(16,15,10,0.22)]">
       <table className="w-full text-left text-sm">
-        <thead className="bg-slate-50 text-xs uppercase text-slate-500">
+        <thead className="bg-cream-100/70 text-[11px] font-semibold uppercase tracking-wide text-neutral-500">
           <tr>
             <th className="px-3 py-2">Area</th>
             <th className="px-3 py-2">KPI</th>
@@ -58,11 +58,11 @@ export function EditableKpiScoreTable({
         </thead>
         <tbody>
           {result.rows.map((row) => (
-            <tr key={row.id} className="border-t border-slate-100">
-              <td className="px-3 py-2 text-slate-500">{row.area_kinerja}</td>
-              <td className="px-3 py-2 font-medium text-slate-900">{row.kpi_name}</td>
+            <tr key={row.id} className="border-t border-black/[0.045]">
+              <td className="px-3 py-2 text-neutral-500">{row.area_kinerja}</td>
+              <td className="px-3 py-2 font-medium text-neutral-900">{row.kpi_name}</td>
               <td className="px-3 py-2">{row.bobot}</td>
-              <td className="px-3 py-2 text-slate-500">{row.target_label}</td>
+              <td className="px-3 py-2 text-neutral-500">{row.target_label}</td>
               <td className="px-3 py-2">
                 <div className="flex items-center gap-1.5">
                   <input
@@ -70,9 +70,9 @@ export function EditableKpiScoreTable({
                     step="0.01"
                     value={values[row.metric_key]}
                     onChange={(e) => handleChange(row.metric_key, e.target.value)}
-                    className="w-24 rounded-lg border border-slate-300 px-2 py-1 text-sm focus:border-slate-500 focus:outline-none"
+                    className="w-24 rounded-xl border border-black/10 bg-white px-2 py-1 text-sm focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/5"
                   />
-                  <span className="text-xs text-slate-400">{row.unit}</span>
+                  <span className="text-xs text-neutral-400">{row.unit}</span>
                 </div>
               </td>
               <td className="px-3 py-2">{Math.round(row.skor * 100)}%</td>
@@ -81,7 +81,7 @@ export function EditableKpiScoreTable({
           ))}
         </tbody>
         <tfoot>
-          <tr className="border-t border-slate-200 bg-slate-50 font-semibold">
+          <tr className="border-t border-black/[0.06] bg-cream-100/70 font-semibold">
             <td className="px-3 py-2" colSpan={6}>
               Total Skor KPI
             </td>
@@ -91,17 +91,17 @@ export function EditableKpiScoreTable({
           </tr>
         </tfoot>
       </table>
-      <div className="flex flex-wrap items-center gap-3 border-t border-slate-200 p-3">
+      <div className="flex flex-wrap items-center gap-3 border-t border-neutral-200 p-3">
         <button
           type="button"
           onClick={handleSave}
           disabled={pending || dirty.size === 0}
-          className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50"
+          className="rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-neutral-800 active:scale-[0.98] transition disabled:opacity-50 disabled:active:scale-100"
         >
           {pending ? "Menyimpan..." : "Simpan Perubahan"}
         </button>
         {saved && !pending && <span className="text-sm text-emerald-600">Tersimpan ✓</span>}
-        <p className="w-full text-xs text-slate-500">
+        <p className="w-full text-xs text-neutral-500">
           Admin bisa mengoreksi nilai Realisasi secara manual, misalnya data dari luar sistem atau koreksi laporan.
         </p>
       </div>

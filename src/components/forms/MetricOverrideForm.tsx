@@ -29,9 +29,9 @@ export function MetricOverrideForm({
   }
 
   return (
-    <div className="flex flex-wrap items-end gap-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4">
+    <div className="flex flex-wrap items-end gap-3 rounded-2xl border border-dashed border-accent/50 bg-accent-soft/40 p-4">
       <div>
-        <label className="mb-1 block text-sm font-medium text-slate-700">
+        <label className="mb-1 block text-sm font-medium text-neutral-700">
           {label} ({unit}) &middot; bulan ini
         </label>
         <input
@@ -39,19 +39,19 @@ export function MetricOverrideForm({
           step="0.01"
           value={value}
           onChange={(e) => setValue(Number(e.target.value))}
-          className="w-40 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+          className="w-40 rounded-xl border border-black/10 bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/5"
         />
       </div>
       <button
         type="button"
         onClick={handleSave}
         disabled={pending}
-        className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50"
+        className="rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-neutral-800 active:scale-[0.98] transition disabled:opacity-50 disabled:active:scale-100"
       >
         {pending ? "Menyimpan..." : "Simpan"}
       </button>
       {saved && !pending && <span className="text-sm text-emerald-600">Tersimpan ✓</span>}
-      <p className="w-full text-xs text-slate-500">
+      <p className="w-full text-xs text-neutral-500">
         Data ini dari luar sistem (insight IG/TikTok), diisi manual sekali per bulan.
       </p>
     </div>

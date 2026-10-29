@@ -25,15 +25,15 @@ export function KpiDefinitionRow({ def }: { def: KpiDefinition }) {
   }
 
   return (
-    <tr className="border-t border-slate-100">
-      <td className="px-3 py-2 text-slate-500">{def.area_kinerja}</td>
-      <td className="px-3 py-2 font-medium text-slate-900">{def.kpi_name}</td>
+    <tr className="border-t border-black/[0.045]">
+      <td className="px-3 py-2 text-neutral-500">{def.area_kinerja}</td>
+      <td className="px-3 py-2 font-medium text-neutral-900">{def.kpi_name}</td>
       <td className="px-3 py-2">
         <input
           type="number"
           value={bobot}
           onChange={(e) => setBobot(Number(e.target.value))}
-          className="w-20 rounded-lg border border-slate-300 px-2 py-1 text-sm"
+          className="w-20 rounded-xl border border-black/10 bg-white px-2 py-1 text-sm"
         />
       </td>
       <td className="px-3 py-2">
@@ -41,14 +41,14 @@ export function KpiDefinitionRow({ def }: { def: KpiDefinition }) {
           type="number"
           value={target}
           onChange={(e) => setTarget(Number(e.target.value))}
-          className="w-24 rounded-lg border border-slate-300 px-2 py-1 text-sm"
+          className="w-24 rounded-xl border border-black/10 bg-white px-2 py-1 text-sm"
         />
       </td>
       <td className="px-3 py-2">
         <input
           value={label}
           onChange={(e) => setLabel(e.target.value)}
-          className="w-40 rounded-lg border border-slate-300 px-2 py-1 text-sm"
+          className="w-40 rounded-xl border border-black/10 bg-white px-2 py-1 text-sm"
         />
       </td>
       <td className="px-3 py-2">
@@ -57,7 +57,7 @@ export function KpiDefinitionRow({ def }: { def: KpiDefinition }) {
             type="button"
             onClick={handleSave}
             disabled={pending}
-            className="rounded-lg bg-slate-900 px-3 py-1 text-xs font-medium text-white hover:bg-slate-700 disabled:opacity-50"
+            className="rounded-full bg-ink px-3.5 py-1.5 text-xs font-medium text-white hover:bg-neutral-800 transition disabled:opacity-50"
           >
             {pending ? "..." : "Simpan"}
           </button>

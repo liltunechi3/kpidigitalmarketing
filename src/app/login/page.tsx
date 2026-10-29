@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { IconFlame } from "@/components/icons";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -31,32 +32,38 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
-      <div className="w-full max-w-sm rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
-        <h1 className="mb-1 text-xl font-semibold text-slate-900">KPI Digital Marketing</h1>
-        <p className="mb-6 text-sm text-slate-500">Masuk untuk mengisi to-do list & lihat skor KPI kamu.</p>
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-cream-50 via-cream-50 to-cream-200 px-4">
+      <div className="w-full max-w-sm">
+        <div className="mb-6 flex flex-col items-center gap-2">
+          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-ink text-accent">
+            <IconFlame className="h-5 w-5" />
+          </span>
+        </div>
+        <div className="rounded-2xl border border-black/[0.06] bg-white p-8 shadow-[0_1px_2px_rgba(16,15,10,0.04),0_16px_40px_-20px_rgba(16,15,10,0.35)]">
+        <h1 className="mb-1 text-xl font-semibold text-neutral-900">KPI Digital Marketing</h1>
+        <p className="mb-6 text-sm text-neutral-500">Masuk untuk mengisi to-do list & lihat skor KPI kamu.</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="mb-1 block text-sm font-medium text-slate-700">Email</label>
+            <label htmlFor="email" className="mb-1 block text-sm font-medium text-neutral-700">Email</label>
             <input
               id="email"
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+              className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/5"
             />
           </div>
           <div>
-            <label htmlFor="password" className="mb-1 block text-sm font-medium text-slate-700">Password</label>
+            <label htmlFor="password" className="mb-1 block text-sm font-medium text-neutral-700">Password</label>
             <input
               id="password"
               type="password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+              className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/5"
             />
           </div>
 
@@ -65,18 +72,19 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50"
+            className="w-full rounded-full bg-ink px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-neutral-800 transition disabled:opacity-50"
           >
             {loading ? "Masuk..." : "Masuk"}
           </button>
         </form>
 
-        <p className="mt-4 text-center text-sm text-slate-500">
+        <p className="mt-4 text-center text-sm text-neutral-500">
           Belum punya akun?{" "}
-          <Link href="/signup" className="font-medium text-slate-900 underline">
+          <Link href="/signup" className="font-medium text-neutral-900 underline">
             Daftar
           </Link>
         </p>
+        </div>
       </div>
     </div>
   );

@@ -114,8 +114,8 @@ export default async function TeamMemberDetailPage({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-semibold text-slate-900">{(profile as Profile).full_name}</h1>
-          <p className="text-sm text-slate-500">
+          <h1 className="text-lg font-semibold text-neutral-900">{(profile as Profile).full_name}</h1>
+          <p className="text-sm text-neutral-500">
             {ROLE_LABELS[(profile as Profile).role]} &middot; {formatMonthLabel(anchorDate)}{" "}
             ({formatPeriodRangeLabel(anchorDate)})
           </p>
@@ -125,10 +125,10 @@ export default async function TeamMemberDetailPage({
 
       <KpiScoreVisual result={result} />
       <MonthlyTrendChart points={trend} />
-      <EditableKpiScoreTable result={result} userId={id} periode={periode} />
+      <EditableKpiScoreTable key={`${id}-${periode}`} result={result} userId={id} periode={periode} />
 
       <div>
-        <h2 className="mb-2 text-sm font-semibold text-slate-700">Detail Aktivitas Harian</h2>
+        <h2 className="mb-2 text-sm font-semibold text-neutral-700">Detail Aktivitas Harian</h2>
         <ActivityLogTable
           role={role}
           contentCreatorLogs={contentCreatorLogs}

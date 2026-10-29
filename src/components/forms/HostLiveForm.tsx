@@ -79,9 +79,9 @@ export function HostLiveForm({
   return (
     <div className="space-y-5">
       {sessions.length > 0 && (
-        <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
+        <div className="overflow-x-auto rounded-2xl border border-black/[0.06] bg-white shadow-[0_1px_2px_rgba(16,15,10,0.04),0_10px_28px_-16px_rgba(16,15,10,0.22)]">
           <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 text-xs uppercase text-slate-500">
+            <thead className="bg-cream-100/70 text-[11px] font-semibold uppercase tracking-wide text-neutral-500">
               <tr>
                 <th className="px-3 py-2">Jam</th>
                 <th className="px-3 py-2">Konsep</th>
@@ -95,7 +95,7 @@ export function HostLiveForm({
             </thead>
             <tbody>
               {sessions.map((s) => (
-                <tr key={s.id} className="border-t border-slate-100">
+                <tr key={s.id} className="border-t border-black/[0.045]">
                   <td className="px-3 py-2">{s.jam_live}</td>
                   <td className="px-3 py-2">{s.konsep}</td>
                   <td className="px-3 py-2">{s.durasi_jam}</td>
@@ -107,7 +107,7 @@ export function HostLiveForm({
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => handleEdit(s)}
-                        className="text-xs text-slate-700 underline"
+                        className="text-xs text-neutral-700 underline"
                       >
                         Edit
                       </button>
@@ -126,105 +126,105 @@ export function HostLiveForm({
         </div>
       )}
 
-      <div className="space-y-4 rounded-xl border border-slate-200 bg-white p-5">
-        <p className="text-sm font-medium text-slate-700">
+      <div className="space-y-4 rounded-2xl border border-black/[0.06] bg-white shadow-[0_1px_2px_rgba(16,15,10,0.04),0_10px_28px_-16px_rgba(16,15,10,0.22)] p-5">
+        <p className="text-sm font-medium text-neutral-700">
           {editingId ? "Edit Sesi Live" : "Tambah Sesi Live"}
         </p>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="mb-1 block text-sm text-slate-700">Jam Live</label>
+            <label className="mb-1 block text-sm text-neutral-700">Jam Live</label>
             <input
               value={form.jam_live}
               onChange={(e) => set("jam_live", e.target.value)}
               placeholder="10.00 - 14.00"
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+              className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/5"
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm text-slate-700">Lokasi Live</label>
+            <label className="mb-1 block text-sm text-neutral-700">Lokasi Live</label>
             <input
               value={form.lokasi_live}
               onChange={(e) => set("lokasi_live", e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+              className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/5"
             />
           </div>
         </div>
         <div>
-          <label className="mb-1 block text-sm text-slate-700">Konsep</label>
+          <label className="mb-1 block text-sm text-neutral-700">Konsep</label>
           <input
             value={form.konsep}
             onChange={(e) => set("konsep", e.target.value)}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+            className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/5"
           />
         </div>
         <div className="grid grid-cols-3 gap-4">
           <div>
-            <label className="mb-1 block text-sm text-slate-700">Durasi (jam)</label>
+            <label className="mb-1 block text-sm text-neutral-700">Durasi (jam)</label>
             <input
               type="number"
               min={0}
               value={form.durasi_jam}
               onChange={(e) => set("durasi_jam", Number(e.target.value))}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+              className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/5"
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm text-slate-700">Unique Views</label>
+            <label className="mb-1 block text-sm text-neutral-700">Unique Views</label>
             <input
               type="number"
               min={0}
               value={form.unique_views}
               onChange={(e) => set("unique_views", Number(e.target.value))}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+              className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/5"
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm text-slate-700">Active Viewers</label>
+            <label className="mb-1 block text-sm text-neutral-700">Active Viewers</label>
             <input
               type="number"
               min={0}
               value={form.active_viewers}
               onChange={(e) => set("active_viewers", Number(e.target.value))}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+              className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/5"
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm text-slate-700">New Followers</label>
+            <label className="mb-1 block text-sm text-neutral-700">New Followers</label>
             <input
               type="number"
               min={0}
               value={form.new_followers}
               onChange={(e) => set("new_followers", Number(e.target.value))}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+              className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/5"
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm text-slate-700">Lead Masuk</label>
+            <label className="mb-1 block text-sm text-neutral-700">Lead Masuk</label>
             <input
               type="number"
               min={0}
               value={form.lead_masuk}
               onChange={(e) => set("lead_masuk", Number(e.target.value))}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+              className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/5"
             />
           </div>
           <div>
-            <label className="mb-1 block text-sm text-slate-700">Video/Konten Dibuat</label>
+            <label className="mb-1 block text-sm text-neutral-700">Video/Konten Dibuat</label>
             <input
               type="number"
               min={0}
               value={form.jumlah_video}
               onChange={(e) => set("jumlah_video", Number(e.target.value))}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+              className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/5"
             />
           </div>
         </div>
         <div>
-          <label className="mb-1 block text-sm text-slate-700">Bukti Link</label>
+          <label className="mb-1 block text-sm text-neutral-700">Bukti Link</label>
           <input
             value={form.bukti_link}
             onChange={(e) => set("bukti_link", e.target.value)}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+            className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/5"
           />
         </div>
 
@@ -233,7 +233,7 @@ export function HostLiveForm({
             type="button"
             onClick={handleSave}
             disabled={pending}
-            className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50"
+            className="rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-neutral-800 active:scale-[0.98] transition disabled:opacity-50 disabled:active:scale-100"
           >
             {pending ? "Menyimpan..." : editingId ? "Simpan Perubahan" : "Tambah Sesi"}
           </button>
@@ -242,7 +242,7 @@ export function HostLiveForm({
               type="button"
               onClick={handleCancelEdit}
               disabled={pending}
-              className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:opacity-50"
+              className="rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-cream-100 transition disabled:opacity-50"
             >
               Batal
             </button>

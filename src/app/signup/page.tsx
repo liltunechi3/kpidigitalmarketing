@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { ROLE_OPTIONS } from "@/lib/roles";
+import { IconFlame } from "@/components/icons";
 import type { TeamRole } from "@/lib/supabase/types";
 
 export default function SignupPage() {
@@ -49,31 +50,37 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
-      <div className="w-full max-w-sm rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
-        <h1 className="mb-1 text-xl font-semibold text-slate-900">Daftar Akun Tim</h1>
-        <p className="mb-6 text-sm text-slate-500">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-cream-50 via-cream-50 to-cream-200 px-4 py-10">
+      <div className="w-full max-w-sm">
+        <div className="mb-6 flex flex-col items-center gap-2">
+          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-ink text-accent">
+            <IconFlame className="h-5 w-5" />
+          </span>
+        </div>
+        <div className="rounded-2xl border border-black/[0.06] bg-white p-8 shadow-[0_1px_2px_rgba(16,15,10,0.04),0_16px_40px_-20px_rgba(16,15,10,0.35)]">
+        <h1 className="mb-1 text-xl font-semibold text-neutral-900">Daftar Akun Tim</h1>
+        <p className="mb-6 text-sm text-neutral-500">
           Akun pertama yang daftar otomatis jadi Admin / Head of Digital Marketing.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="fullName" className="mb-1 block text-sm font-medium text-slate-700">Nama Lengkap</label>
+            <label htmlFor="fullName" className="mb-1 block text-sm font-medium text-neutral-700">Nama Lengkap</label>
             <input
               id="fullName"
               required
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+              className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/5"
             />
           </div>
           <div>
-            <label htmlFor="role" className="mb-1 block text-sm font-medium text-slate-700">Role</label>
+            <label htmlFor="role" className="mb-1 block text-sm font-medium text-neutral-700">Role</label>
             <select
               id="role"
               value={role}
               onChange={(e) => setRole(e.target.value as TeamRole)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+              className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/5"
             >
               {ROLE_OPTIONS.map((r) => (
                 <option key={r.value} value={r.value}>
@@ -83,18 +90,18 @@ export default function SignupPage() {
             </select>
           </div>
           <div>
-            <label htmlFor="email" className="mb-1 block text-sm font-medium text-slate-700">Email</label>
+            <label htmlFor="email" className="mb-1 block text-sm font-medium text-neutral-700">Email</label>
             <input
               id="email"
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+              className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/5"
             />
           </div>
           <div>
-            <label htmlFor="password" className="mb-1 block text-sm font-medium text-slate-700">Password</label>
+            <label htmlFor="password" className="mb-1 block text-sm font-medium text-neutral-700">Password</label>
             <input
               id="password"
               type="password"
@@ -102,7 +109,7 @@ export default function SignupPage() {
               minLength={6}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+              className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/5"
             />
           </div>
 
@@ -112,18 +119,19 @@ export default function SignupPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50"
+            className="w-full rounded-full bg-ink px-4 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-neutral-800 transition disabled:opacity-50"
           >
             {loading ? "Mendaftar..." : "Daftar"}
           </button>
         </form>
 
-        <p className="mt-4 text-center text-sm text-slate-500">
+        <p className="mt-4 text-center text-sm text-neutral-500">
           Sudah punya akun?{" "}
-          <Link href="/login" className="font-medium text-slate-900 underline">
+          <Link href="/login" className="font-medium text-neutral-900 underline">
             Masuk
           </Link>
         </p>
+        </div>
       </div>
     </div>
   );

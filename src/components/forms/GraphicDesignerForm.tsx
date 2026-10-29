@@ -47,9 +47,9 @@ export function GraphicDesignerForm({
   }
 
   return (
-    <div className="space-y-5 rounded-xl border border-slate-200 bg-white p-5">
+    <div className="space-y-5 rounded-2xl border border-black/[0.06] bg-white shadow-[0_1px_2px_rgba(16,15,10,0.04),0_10px_28px_-16px_rgba(16,15,10,0.22)] p-5">
       <div>
-        <label className="mb-2 block text-sm font-medium text-slate-700">To Do List Hari Ini</label>
+        <label className="mb-2 block text-sm font-medium text-neutral-700">To Do List Hari Ini</label>
         <div className="space-y-2">
           {items.map((it, idx) => (
             <div key={idx} className="flex items-center gap-2">
@@ -63,12 +63,12 @@ export function GraphicDesignerForm({
                 value={it.text}
                 onChange={(e) => updateItem(idx, { text: e.target.value })}
                 placeholder="Resize Flyer Promo..."
-                className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+                className="flex-1 rounded-xl border border-black/10 bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/5"
               />
               <button
                 type="button"
                 onClick={() => removeItem(idx)}
-                className="rounded-lg border border-slate-300 px-2 text-sm text-slate-500 hover:bg-slate-100"
+                className="rounded-full border border-black/10 bg-white px-2 text-sm text-neutral-500 hover:bg-cream-100 transition"
               >
                 Hapus
               </button>
@@ -78,7 +78,7 @@ export function GraphicDesignerForm({
         <button
           type="button"
           onClick={addItem}
-          className="mt-2 text-sm font-medium text-slate-700 underline"
+          className="mt-2 text-sm font-medium text-neutral-700 underline"
         >
           + Tambah item
         </button>
@@ -86,33 +86,33 @@ export function GraphicDesignerForm({
 
       <div className="grid grid-cols-3 gap-4">
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">Total Pekerjaan</label>
+          <label className="mb-1 block text-sm font-medium text-neutral-700">Total Pekerjaan</label>
           <input
             type="number"
             min={0}
             value={totalPekerjaan}
             onChange={(e) => setTotalPekerjaan(Number(e.target.value))}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+            className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/5"
           />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">Selesai Tepat Waktu</label>
+          <label className="mb-1 block text-sm font-medium text-neutral-700">Selesai Tepat Waktu</label>
           <input
             type="number"
             min={0}
             value={totalTepatWaktu}
             onChange={(e) => setTotalTepatWaktu(Number(e.target.value))}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+            className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/5"
           />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">Total Revisi</label>
+          <label className="mb-1 block text-sm font-medium text-neutral-700">Total Revisi</label>
           <input
             type="number"
             min={0}
             value={totalRevisi}
             onChange={(e) => setTotalRevisi(Number(e.target.value))}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+            className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/5"
           />
         </div>
       </div>
@@ -122,7 +122,7 @@ export function GraphicDesignerForm({
           type="button"
           onClick={handleSave}
           disabled={pending}
-          className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50"
+          className="rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-neutral-800 active:scale-[0.98] transition disabled:opacity-50 disabled:active:scale-100"
         >
           {pending ? "Menyimpan..." : "Simpan"}
         </button>

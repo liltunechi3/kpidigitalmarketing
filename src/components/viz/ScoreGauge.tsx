@@ -45,11 +45,11 @@ export function ScoreGauge({
           <line x1={tx1} y1={ty1} x2={tx2} y2={ty2} stroke="#64748b" strokeWidth="3" strokeLinecap="round" />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-2xl font-semibold text-slate-900">{Math.round(clamped)}%</span>
-          {caption && <span className="text-[11px] text-slate-500">{caption}</span>}
+          <span className="text-2xl font-semibold text-neutral-900">{Math.round(clamped)}%</span>
+          {caption && <span className="text-[11px] text-neutral-500">{caption}</span>}
         </div>
       </div>
-      <span className="flex items-center gap-1.5 text-xs font-medium text-slate-600">
+      <span className="flex items-center gap-1.5 text-xs font-medium text-neutral-600">
         <span className="h-2 w-2 rounded-full" style={{ backgroundColor: color }} />
         {STATUS_LABEL[status]}
       </span>

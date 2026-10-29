@@ -61,6 +61,15 @@ export function formatPeriodRangeLabel(dateStr: string): string {
   return sy === ey ? `${startLabel} - ${endLabel}` : `${startLabel} ${sy} - ${endLabel}`;
 }
 
+/** Whole days from today (local) until the given ISO date (inclusive), can be negative if past. */
+export function daysUntil(dateISO: string): number {
+  const [y, m, d] = dateISO.split("-").map(Number);
+  const target = new Date(y, m - 1, d);
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.round((target.getTime() - today.getTime()) / 86_400_000);
+}
+
 /** Last n months up to and including anchorDate's month, oldest first. */
 export function lastNMonths(anchorDate: string, n: number): { anchorDate: string; label: string }[] {
   const [y, m] = anchorDate.split("-").map(Number);

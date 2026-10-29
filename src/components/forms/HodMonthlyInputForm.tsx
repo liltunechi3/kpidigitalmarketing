@@ -35,10 +35,10 @@ export function HodMonthlyInputForm({
   }
 
   return (
-    <div className="space-y-5 rounded-xl border border-slate-200 bg-white p-5">
+    <div className="space-y-5 rounded-2xl border border-black/[0.06] bg-white shadow-[0_1px_2px_rgba(16,15,10,0.04),0_10px_28px_-16px_rgba(16,15,10,0.22)] p-5">
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">
+          <label className="mb-1 block text-sm font-medium text-neutral-700">
             Pencapaian Leads (total, semua platform)
           </label>
           <input
@@ -46,11 +46,11 @@ export function HodMonthlyInputForm({
             min={0}
             value={leads}
             onChange={(e) => setLeads(Number(e.target.value))}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+            className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/5"
           />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">
+          <label className="mb-1 block text-sm font-medium text-neutral-700">
             Total Survey (dari leads)
           </label>
           <input
@@ -58,11 +58,11 @@ export function HodMonthlyInputForm({
             min={0}
             value={survey}
             onChange={(e) => setSurvey(Number(e.target.value))}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+            className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/5"
           />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">
+          <label className="mb-1 block text-sm font-medium text-neutral-700">
             Produktivitas & Ketepatan Tim (%)
           </label>
           <input
@@ -71,11 +71,11 @@ export function HodMonthlyInputForm({
             max={100}
             value={produktivitas}
             onChange={(e) => setProduktivitas(Number(e.target.value))}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+            className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/5"
           />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700">
+          <label className="mb-1 block text-sm font-medium text-neutral-700">
             Efisiensi Budget (Rp/Lead)
           </label>
           <input
@@ -83,17 +83,17 @@ export function HodMonthlyInputForm({
             min={0}
             value={budget}
             onChange={(e) => setBudget(Number(e.target.value))}
-            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+            className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/5"
           />
         </div>
       </div>
       <div>
-        <label className="mb-1 block text-sm font-medium text-slate-700">Catatan (opsional)</label>
+        <label className="mb-1 block text-sm font-medium text-neutral-700">Catatan (opsional)</label>
         <textarea
           value={catatan}
           onChange={(e) => setCatatan(e.target.value)}
           rows={3}
-          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none"
+          className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm focus:border-ink focus:outline-none focus:ring-2 focus:ring-ink/5"
         />
       </div>
 
@@ -102,7 +102,7 @@ export function HodMonthlyInputForm({
           type="button"
           onClick={handleSave}
           disabled={pending}
-          className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50"
+          className="rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-neutral-800 active:scale-[0.98] transition disabled:opacity-50 disabled:active:scale-100"
         >
           {pending ? "Menyimpan..." : "Simpan"}
         </button>

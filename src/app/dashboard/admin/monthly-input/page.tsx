@@ -28,15 +28,15 @@ export default async function MonthlyInputPage({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-semibold text-slate-900">Input Bulanan (Head of Digital Marketing)</h1>
-          <p className="text-sm text-slate-500">
+          <h1 className="text-lg font-semibold text-neutral-900">Input Bulanan (Head of Digital Marketing)</h1>
+          <p className="text-sm text-neutral-500">
             {formatMonthLabel(anchorDate)} &middot; {formatPeriodRangeLabel(anchorDate)}
           </p>
         </div>
         <MonthSelector bulan={bulan} basePath="/dashboard/admin/monthly-input" />
       </div>
 
-      <HodMonthlyInputForm periode={periode} existing={existing as MonthlyHodInput | null} />
+      <HodMonthlyInputForm key={periode} periode={periode} existing={existing as MonthlyHodInput | null} />
     </div>
   );
 }

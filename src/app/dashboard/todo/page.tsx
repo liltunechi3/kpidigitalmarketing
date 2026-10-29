@@ -50,7 +50,7 @@ export default async function TodoPage({
     body = <HostLiveForm key={tanggal} tanggal={tanggal} sessions={(data as LogHostLive[] | null) ?? []} />;
   } else {
     body = (
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-neutral-500">
         Head of Digital Marketing tidak mengisi to-do harian. Lihat{" "}
         <Link href="/dashboard/admin/team" className="underline">
           Ringkasan Tim
@@ -67,7 +67,7 @@ export default async function TodoPage({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold text-slate-900">To-Do List Harian</h1>
+        <h1 className="text-lg font-semibold text-neutral-900">To-Do List Harian</h1>
         <DateSelector tanggal={tanggal} />
       </div>
       {body}

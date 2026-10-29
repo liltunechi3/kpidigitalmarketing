@@ -27,9 +27,9 @@ export function ActivityLogTable({
   if (role === "content_creator") {
     const logs = contentCreatorLogs ?? [];
     return (
-      <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
+      <div className="overflow-x-auto rounded-2xl border border-black/[0.06] bg-white shadow-[0_1px_2px_rgba(16,15,10,0.04),0_10px_28px_-16px_rgba(16,15,10,0.22)]">
         <table className="w-full text-left text-sm">
-          <thead className="bg-slate-50 text-xs uppercase text-slate-500">
+          <thead className="bg-cream-100/70 text-[11px] font-semibold uppercase tracking-wide text-neutral-500">
             <tr>
               <th className="px-3 py-2">Tgl</th>
               <th className="px-3 py-2">Editing Apa Saja</th>
@@ -42,14 +42,14 @@ export function ActivityLogTable({
           <tbody>
             {logs.length === 0 && (
               <tr>
-                <td className="px-3 py-4 text-slate-400" colSpan={6}>
+                <td className="px-3 py-4 text-neutral-400" colSpan={6}>
                   Belum ada entri bulan ini.
                 </td>
               </tr>
             )}
             {logs.map((l) => (
-              <tr key={l.id} className="border-t border-slate-100 align-top">
-                <td className="px-3 py-2 text-slate-500">{formatDate(l.tanggal)}</td>
+              <tr key={l.id} className="border-t border-black/[0.045] align-top">
+                <td className="px-3 py-2 text-neutral-500">{formatDate(l.tanggal)}</td>
                 <td className="px-3 py-2">
                   <ul className="list-disc space-y-0.5 pl-4">
                     {l.todo_items.map((t, i) => (
@@ -57,7 +57,7 @@ export function ActivityLogTable({
                     ))}
                   </ul>
                 </td>
-                <td className="px-3 py-2 text-slate-700">{l.postingan_konten || "-"}</td>
+                <td className="px-3 py-2 text-neutral-700">{l.postingan_konten || "-"}</td>
                 <td className="px-3 py-2">
                   {l.bukti_link ? (
                     <a
@@ -85,9 +85,9 @@ export function ActivityLogTable({
   if (role === "graphic_designer") {
     const logs = graphicDesignerLogs ?? [];
     return (
-      <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
+      <div className="overflow-x-auto rounded-2xl border border-black/[0.06] bg-white shadow-[0_1px_2px_rgba(16,15,10,0.04),0_10px_28px_-16px_rgba(16,15,10,0.22)]">
         <table className="w-full text-left text-sm">
-          <thead className="bg-slate-50 text-xs uppercase text-slate-500">
+          <thead className="bg-cream-100/70 text-[11px] font-semibold uppercase tracking-wide text-neutral-500">
             <tr>
               <th className="px-3 py-2">Tgl</th>
               <th className="px-3 py-2">To Do List</th>
@@ -99,18 +99,18 @@ export function ActivityLogTable({
           <tbody>
             {logs.length === 0 && (
               <tr>
-                <td className="px-3 py-4 text-slate-400" colSpan={5}>
+                <td className="px-3 py-4 text-neutral-400" colSpan={5}>
                   Belum ada entri bulan ini.
                 </td>
               </tr>
             )}
             {logs.map((l) => (
-              <tr key={l.id} className="border-t border-slate-100 align-top">
-                <td className="px-3 py-2 text-slate-500">{formatDate(l.tanggal)}</td>
+              <tr key={l.id} className="border-t border-black/[0.045] align-top">
+                <td className="px-3 py-2 text-neutral-500">{formatDate(l.tanggal)}</td>
                 <td className="px-3 py-2">
                   <ul className="space-y-0.5">
                     {l.todo_items.map((t, i) => (
-                      <li key={i} className={t.done ? "text-slate-700" : "text-slate-400"}>
+                      <li key={i} className={t.done ? "text-neutral-700" : "text-neutral-400"}>
                         {t.done ? "☑" : "☐"} {t.text}
                       </li>
                     ))}
@@ -130,9 +130,9 @@ export function ActivityLogTable({
   if (role === "host_live") {
     const logs = hostLiveLogs ?? [];
     return (
-      <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
+      <div className="overflow-x-auto rounded-2xl border border-black/[0.06] bg-white shadow-[0_1px_2px_rgba(16,15,10,0.04),0_10px_28px_-16px_rgba(16,15,10,0.22)]">
         <table className="w-full text-left text-sm">
-          <thead className="bg-slate-50 text-xs uppercase text-slate-500">
+          <thead className="bg-cream-100/70 text-[11px] font-semibold uppercase tracking-wide text-neutral-500">
             <tr>
               <th className="px-3 py-2">Tgl</th>
               <th className="px-3 py-2">Jam</th>
@@ -147,14 +147,14 @@ export function ActivityLogTable({
           <tbody>
             {logs.length === 0 && (
               <tr>
-                <td className="px-3 py-4 text-slate-400" colSpan={8}>
+                <td className="px-3 py-4 text-neutral-400" colSpan={8}>
                   Belum ada entri bulan ini.
                 </td>
               </tr>
             )}
             {logs.map((l) => (
-              <tr key={l.id} className="border-t border-slate-100">
-                <td className="px-3 py-2 text-slate-500">{formatDate(l.tanggal)}</td>
+              <tr key={l.id} className="border-t border-black/[0.045]">
+                <td className="px-3 py-2 text-neutral-500">{formatDate(l.tanggal)}</td>
                 <td className="px-3 py-2">{l.jam_live || "-"}</td>
                 <td className="px-3 py-2">{l.konsep || "-"}</td>
                 <td className="px-3 py-2">{l.durasi_jam}j</td>
@@ -173,35 +173,35 @@ export function ActivityLogTable({
   // head_digital_marketing
   if (!hodInput) {
     return (
-      <div className="rounded-xl border border-slate-200 bg-white p-5 text-sm text-slate-400">
+      <div className="rounded-2xl border border-black/[0.06] bg-white shadow-[0_1px_2px_rgba(16,15,10,0.04),0_10px_28px_-16px_rgba(16,15,10,0.22)] p-5 text-sm text-neutral-400">
         Belum ada input bulanan untuk bulan ini.
       </div>
     );
   }
   return (
-    <div className="grid grid-cols-2 gap-4 rounded-xl border border-slate-200 bg-white p-5 text-sm sm:grid-cols-4">
+    <div className="grid grid-cols-2 gap-4 rounded-2xl border border-black/[0.06] bg-white shadow-[0_1px_2px_rgba(16,15,10,0.04),0_10px_28px_-16px_rgba(16,15,10,0.22)] p-5 text-sm sm:grid-cols-4">
       <div>
-        <p className="text-xs text-slate-500">Pencapaian Leads</p>
-        <p className="font-semibold text-slate-900">{hodInput.pencapaian_leads}</p>
+        <p className="text-xs text-neutral-500">Pencapaian Leads</p>
+        <p className="font-semibold text-neutral-900">{hodInput.pencapaian_leads}</p>
       </div>
       <div>
-        <p className="text-xs text-slate-500">Total Survey</p>
-        <p className="font-semibold text-slate-900">{hodInput.total_survey}</p>
+        <p className="text-xs text-neutral-500">Total Survey</p>
+        <p className="font-semibold text-neutral-900">{hodInput.total_survey}</p>
       </div>
       <div>
-        <p className="text-xs text-slate-500">Produktivitas Tim</p>
-        <p className="font-semibold text-slate-900">{hodInput.produktivitas_tim}%</p>
+        <p className="text-xs text-neutral-500">Produktivitas Tim</p>
+        <p className="font-semibold text-neutral-900">{hodInput.produktivitas_tim}%</p>
       </div>
       <div>
-        <p className="text-xs text-slate-500">Efisiensi Budget</p>
-        <p className="font-semibold text-slate-900">
+        <p className="text-xs text-neutral-500">Efisiensi Budget</p>
+        <p className="font-semibold text-neutral-900">
           Rp {hodInput.total_budget.toLocaleString("id-ID")}/lead
         </p>
       </div>
       {hodInput.catatan && (
         <div className="col-span-full">
-          <p className="text-xs text-slate-500">Catatan</p>
-          <p className="text-slate-700">{hodInput.catatan}</p>
+          <p className="text-xs text-neutral-500">Catatan</p>
+          <p className="text-neutral-700">{hodInput.catatan}</p>
         </div>
       )}
     </div>

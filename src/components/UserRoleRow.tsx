@@ -20,16 +20,16 @@ export function UserRoleRow({ profile, isSelf }: { profile: Profile; isSelf: boo
   }
 
   return (
-    <tr className="border-t border-slate-100">
-      <td className="px-3 py-2 font-medium text-slate-900">
+    <tr className="border-t border-black/[0.045]">
+      <td className="px-3 py-2 font-medium text-neutral-900">
         {profile.full_name}
-        {isSelf && <span className="ml-1 text-xs text-slate-400">(kamu)</span>}
+        {isSelf && <span className="ml-1 text-xs text-neutral-400">(kamu)</span>}
       </td>
       <td className="px-3 py-2">
         <select
           value={role}
           onChange={(e) => setRole(e.target.value as TeamRole)}
-          className="rounded-lg border border-slate-300 px-2 py-1 text-sm"
+          className="rounded-xl border border-black/10 bg-white px-2 py-1 text-sm"
         >
           {ROLE_OPTIONS.map((r) => (
             <option key={r.value} value={r.value}>
@@ -52,7 +52,7 @@ export function UserRoleRow({ profile, isSelf }: { profile: Profile; isSelf: boo
             type="button"
             onClick={handleSave}
             disabled={pending}
-            className="rounded-lg bg-slate-900 px-3 py-1 text-xs font-medium text-white hover:bg-slate-700 disabled:opacity-50"
+            className="rounded-full bg-ink px-3.5 py-1.5 text-xs font-medium text-white hover:bg-neutral-800 transition disabled:opacity-50"
           >
             {pending ? "..." : "Simpan"}
           </button>

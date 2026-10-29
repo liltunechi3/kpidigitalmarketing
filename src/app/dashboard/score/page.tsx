@@ -91,6 +91,7 @@ export default async function ScorePage({
   if (profile.role === "content_creator") {
     overrideBlock = (
       <MetricOverrideForm
+        key={periode}
         periode={periode}
         metricKey="cc_engagement_rate"
         label="Engagement Rate"
@@ -119,8 +120,8 @@ export default async function ScorePage({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-semibold text-slate-900">Skor KPI Saya</h1>
-          <p className="text-sm text-slate-500">
+          <h1 className="text-lg font-semibold text-neutral-900">Skor KPI Saya</h1>
+          <p className="text-sm text-neutral-500">
             {formatMonthLabel(anchorDate)} &middot; {formatPeriodRangeLabel(anchorDate)}
           </p>
         </div>
@@ -132,7 +133,7 @@ export default async function ScorePage({
       <KpiScoreTable result={result} />
 
       <div>
-        <h2 className="mb-2 text-sm font-semibold text-slate-700">Riwayat Aktivitas Harian</h2>
+        <h2 className="mb-2 text-sm font-semibold text-neutral-700">Riwayat Aktivitas Harian</h2>
         <ActivityLogTable
           role={profile.role}
           contentCreatorLogs={contentCreatorLogs}
