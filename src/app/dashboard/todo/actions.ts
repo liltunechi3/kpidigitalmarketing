@@ -63,6 +63,66 @@ export async function upsertGraphicDesignerLog(input: {
   revalidatePath("/dashboard/score");
 }
 
+export async function updateContentCreatorLog(
+  id: string,
+  input: {
+    todo_items: TodoItem[];
+    postingan_konten: string;
+    bukti_link: string;
+    jumlah_revisi: number;
+    jumlah_leads: number;
+  }
+) {
+  const { userId } = await requireProfile();
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("log_content_creator")
+    .update({
+      todo_items: input.todo_items,
+      postingan_konten: input.postingan_konten || null,
+      bukti_link: input.bukti_link || null,
+      jumlah_revisi: input.jumlah_revisi,
+      jumlah_leads: input.jumlah_leads,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .eq("user_id", userId);
+
+  if (error) throw new Error(error.message);
+  revalidatePath("/dashboard/todo");
+  revalidatePath("/dashboard/score");
+}
+
+export async function updateGraphicDesignerLog(
+  id: string,
+  input: {
+    todo_items: TodoItem[];
+    total_pekerjaan: number;
+    total_tepat_waktu: number;
+    total_revisi: number;
+  }
+) {
+  const { userId } = await requireProfile();
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("log_graphic_designer")
+    .update({
+      todo_items: input.todo_items,
+      total_pekerjaan: input.total_pekerjaan,
+      total_tepat_waktu: input.total_tepat_waktu,
+      total_revisi: input.total_revisi,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .eq("user_id", userId);
+
+  if (error) throw new Error(error.message);
+  revalidatePath("/dashboard/todo");
+  revalidatePath("/dashboard/score");
+}
+
 export async function addHostLiveSession(input: {
   tanggal: string;
   jam_live: string;

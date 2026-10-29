@@ -135,6 +135,8 @@ export default async function TeamMemberDetailPage({
           graphicDesignerLogs={graphicDesignerLogs}
           hostLiveLogs={hostLiveLogs}
           hodInput={hodInput}
+          mode="admin"
+          targetUserId={id}
         />
       </div>
     </div>
