@@ -21,6 +21,7 @@ import { StatTile } from "@/components/viz/StatTile";
 import { MonthlyTrendChart } from "@/components/viz/MonthlyTrendChart";
 import { TeamBarChart, type TeamBarDatum } from "@/components/viz/TeamBarChart";
 import { PersonalCalendar } from "@/components/PersonalCalendar";
+import { TeamActivityCalendar, type CalendarMember } from "@/components/TeamActivityCalendar";
 import {
   IconChecklist,
   IconChart,
@@ -32,7 +33,9 @@ import {
   IconAlert,
   IconChevronRight,
 } from "@/components/icons";
-import type { KpiDefinition, Profile } from "@/lib/supabase/types";
+import type { KpiDefinition, Profile, TeamRole } from "@/lib/supabase/types";
+
+const DAILY_LOG_ROLES: TeamRole[] = ["content_creator", "graphic_designer", "host_live"];
 
 function Greeting() {
   const h = new Date().getHours();
@@ -52,17 +55,52 @@ export default async function DashboardHomePage() {
   const supabase = await createClient();
 
   if (profile.role === "head_digital_marketing") {
-    const [{ data: profiles }, { data: defs }, { data: hodInput }] = await Promise.all([
-      supabase.from("profiles").select("*").order("full_name", { ascending: true }),
-      supabase.from("kpi_definitions").select("*"),
-      supabase
-        .from("monthly_hod_input")
-        .select("id")
-        .eq("user_id", userId)
-        .eq("periode", periode)
-        .maybeSingle(),
-    ]);
+    const today = todayISO();
+    const [hodStart, hodEnd] = monthRange(anchorDate);
+    const [{ data: profiles }, { data: defs }, { data: hodInput }, { data: ccLogs }, { data: gdLogs }, { data: hlLogs }] =
+      await Promise.all([
+        supabase.from("profiles").select("*").order("full_name", { ascending: true }),
+        supabase.from("kpi_definitions").select("*"),
+        supabase
+          .from("monthly_hod_input")
+          .select("id")
+          .eq("user_id", userId)
+          .eq("periode", periode)
+          .maybeSingle(),
+        supabase.from("log_content_creator").select("user_id, tanggal").gte("tanggal", hodStart).lte("tanggal", hodEnd),
+        supabase.from("log_graphic_designer").select("user_id, tanggal").gte("tanggal", hodStart).lte("tanggal", hodEnd),
+        supabase.from("log_host_live").select("user_id, tanggal").gte("tanggal", hodStart).lte("tanggal", hodEnd),
+      ]);
     const definitions = (defs as KpiDefinition[]) ?? [];
+
+    const datesByUser = new Map<string, Set<string>>();
+    for (const row of [...(ccLogs ?? []), ...(gdLogs ?? []), ...(hlLogs ?? [])] as {
+      user_id: string;
+      tanggal: string;
+    }[]) {
+      const set = datesByUser.get(row.user_id) ?? new Set<string>();
+      set.add(row.tanggal);
+      datesByUser.set(row.user_id, set);
+    }
+    const calendarWeeks = buildPeriodWeeks(hodStart, hodEnd, today);
+    const totalPeriodDays = calendarWeeks.flat().filter((c) => c.inPeriod).length;
+    const calendarMembers: CalendarMember[] = ((profiles as Profile[]) ?? []).map((p) => {
+      const hasDailyLog = DAILY_LOG_ROLES.includes(p.role);
+      const filledDates = Array.from(datesByUser.get(p.id) ?? []);
+      const missedCount = hasDailyLog
+        ? calendarWeeks.flat().filter((c) => c.inPeriod && c.iso <= today && !filledDates.includes(c.iso)).length
+        : 0;
+      return {
+        id: p.id,
+        fullName: p.full_name,
+        roleLabel: ROLE_LABELS[p.role],
+        hasDailyLog,
+        filledDates,
+        filledCount: filledDates.length,
+        missedCount,
+        totalPeriodDays,
+      };
+    });
 
     const rows = await Promise.all(
       ((profiles as Profile[]) ?? []).map(async (p) => {
@@ -157,6 +195,8 @@ export default async function DashboardHomePage() {
             />
           </div>
         </div>
+
+        <TeamActivityCalendar members={calendarMembers} weeks={calendarWeeks} todayIso={today} bulan={bulan} />
       </div>
     );
   }
