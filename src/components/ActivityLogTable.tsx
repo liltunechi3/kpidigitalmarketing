@@ -267,8 +267,136 @@ export function ActivityLogTable({
 
   if (role === "content_creator") {
     const logs = contentCreatorLogs ?? [];
+    if (logs.length === 0) {
+      return (
+        <div className="rounded-2xl border border-black/[0.06] bg-white p-4 text-sm text-neutral-400 shadow-[0_1px_2px_rgba(16,15,10,0.04),0_10px_28px_-16px_rgba(16,15,10,0.22)]">
+          Belum ada entri bulan ini.
+        </div>
+      );
+    }
     return (
-      <div className="overflow-x-auto rounded-2xl border border-black/[0.06] bg-white shadow-[0_1px_2px_rgba(16,15,10,0.04),0_10px_28px_-16px_rgba(16,15,10,0.22)]">
+      <>
+        <div className="space-y-3 sm:hidden">
+          {logs.map((l) => {
+            const editing = editingId === l.id;
+            return (
+              <div
+                key={l.id}
+                className="rounded-2xl border border-black/[0.06] bg-white p-3.5 shadow-[0_1px_2px_rgba(16,15,10,0.04),0_10px_28px_-16px_rgba(16,15,10,0.22)]"
+              >
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="text-xs font-semibold text-neutral-500">{formatDate(l.tanggal)}</span>
+                  <RowActions
+                    editing={editing}
+                    pending={pending}
+                    onEdit={() => startEditCc(l)}
+                    onSave={() => saveCc(l)}
+                    onCancel={cancelEdit}
+                  />
+                </div>
+
+                <div className="space-y-2.5">
+                  <div>
+                    <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-neutral-400">
+                      Editing Apa Saja
+                    </p>
+                    {editing && ccDraft ? (
+                      <EditorItemsList
+                        items={ccDraft.todo_items}
+                        onChange={(items) => setCcDraft((d) => (d ? { ...d, todo_items: items } : d))}
+                      />
+                    ) : (
+                      <ul className="list-disc space-y-0.5 pl-4 text-sm">
+                        {l.todo_items.map((t, i) => (
+                          <li key={i}>{t.text}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+
+                  <div>
+                    <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-neutral-400">
+                      Postingan Konten
+                    </p>
+                    {editing && ccDraft ? (
+                      <input
+                        value={ccDraft.postingan_konten}
+                        onChange={(e) => setCcDraft((d) => (d ? { ...d, postingan_konten: e.target.value } : d))}
+                        className={inputCls}
+                      />
+                    ) : (
+                      <p className="text-sm text-neutral-700">{l.postingan_konten || "-"}</p>
+                    )}
+                  </div>
+
+                  <div>
+                    <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-neutral-400">Bukti</p>
+                    {editing && ccDraft ? (
+                      <input
+                        value={ccDraft.bukti_link}
+                        onChange={(e) => setCcDraft((d) => (d ? { ...d, bukti_link: e.target.value } : d))}
+                        className={inputCls}
+                        placeholder="https://..."
+                      />
+                    ) : l.bukti_link ? (
+                      <a
+                        href={l.bukti_link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-blue-600 underline"
+                      >
+                        Link
+                      </a>
+                    ) : (
+                      <p className="text-sm text-neutral-700">-</p>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-neutral-400">
+                        Revisi
+                      </p>
+                      {editing && ccDraft ? (
+                        <input
+                          type="number"
+                          min={0}
+                          value={ccDraft.jumlah_revisi}
+                          onChange={(e) =>
+                            setCcDraft((d) => (d ? { ...d, jumlah_revisi: Number(e.target.value) } : d))
+                          }
+                          className={inputCls}
+                        />
+                      ) : (
+                        <p className="text-sm text-neutral-900">{l.jumlah_revisi}</p>
+                      )}
+                    </div>
+                    <div>
+                      <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-neutral-400">
+                        Leads
+                      </p>
+                      {editing && ccDraft ? (
+                        <input
+                          type="number"
+                          min={0}
+                          value={ccDraft.jumlah_leads}
+                          onChange={(e) =>
+                            setCcDraft((d) => (d ? { ...d, jumlah_leads: Number(e.target.value) } : d))
+                          }
+                          className={inputCls}
+                        />
+                      ) : (
+                        <p className="text-sm text-neutral-900">{l.jumlah_leads}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="hidden overflow-x-auto rounded-2xl border border-black/[0.06] bg-white shadow-[0_1px_2px_rgba(16,15,10,0.04),0_10px_28px_-16px_rgba(16,15,10,0.22)] sm:block">
         <table className="w-full text-left text-sm">
           <thead className="bg-cream-100/70 text-[11px] font-semibold uppercase tracking-wide text-neutral-500">
             <tr>
@@ -282,13 +410,6 @@ export function ActivityLogTable({
             </tr>
           </thead>
           <tbody>
-            {logs.length === 0 && (
-              <tr>
-                <td className="px-3 py-4 text-neutral-400" colSpan={7}>
-                  Belum ada entri bulan ini.
-                </td>
-              </tr>
-            )}
             {logs.map((l) => {
               const editing = editingId === l.id;
               return (
@@ -380,14 +501,126 @@ export function ActivityLogTable({
             })}
           </tbody>
         </table>
-      </div>
+        </div>
+      </>
     );
   }
 
   if (role === "graphic_designer") {
     const logs = graphicDesignerLogs ?? [];
+    if (logs.length === 0) {
+      return (
+        <div className="rounded-2xl border border-black/[0.06] bg-white p-4 text-sm text-neutral-400 shadow-[0_1px_2px_rgba(16,15,10,0.04),0_10px_28px_-16px_rgba(16,15,10,0.22)]">
+          Belum ada entri bulan ini.
+        </div>
+      );
+    }
     return (
-      <div className="overflow-x-auto rounded-2xl border border-black/[0.06] bg-white shadow-[0_1px_2px_rgba(16,15,10,0.04),0_10px_28px_-16px_rgba(16,15,10,0.22)]">
+      <>
+        <div className="space-y-3 sm:hidden">
+          {logs.map((l) => {
+            const editing = editingId === l.id;
+            return (
+              <div
+                key={l.id}
+                className="rounded-2xl border border-black/[0.06] bg-white p-3.5 shadow-[0_1px_2px_rgba(16,15,10,0.04),0_10px_28px_-16px_rgba(16,15,10,0.22)]"
+              >
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="text-xs font-semibold text-neutral-500">{formatDate(l.tanggal)}</span>
+                  <RowActions
+                    editing={editing}
+                    pending={pending}
+                    onEdit={() => startEditGd(l)}
+                    onSave={() => saveGd(l)}
+                    onCancel={cancelEdit}
+                  />
+                </div>
+
+                <div className="space-y-2.5">
+                  <div>
+                    <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-neutral-400">
+                      To Do List
+                    </p>
+                    {editing && gdDraft ? (
+                      <EditorItemsList
+                        withDone
+                        items={gdDraft.todo_items}
+                        onChange={(items) => setGdDraft((d) => (d ? { ...d, todo_items: items } : d))}
+                      />
+                    ) : (
+                      <ul className="space-y-0.5 text-sm">
+                        {l.todo_items.map((t, i) => (
+                          <li key={i} className={t.done ? "text-neutral-700" : "text-neutral-400"}>
+                            {t.done ? "☑" : "☐"} {t.text}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-3">
+                    <div>
+                      <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-neutral-400">
+                        Pekerjaan
+                      </p>
+                      {editing && gdDraft ? (
+                        <input
+                          type="number"
+                          min={0}
+                          value={gdDraft.total_pekerjaan}
+                          onChange={(e) =>
+                            setGdDraft((d) => (d ? { ...d, total_pekerjaan: Number(e.target.value) } : d))
+                          }
+                          className={inputCls}
+                        />
+                      ) : (
+                        <p className="text-sm text-neutral-900">{l.total_pekerjaan}</p>
+                      )}
+                    </div>
+                    <div>
+                      <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-neutral-400">
+                        Tepat Waktu
+                      </p>
+                      {editing && gdDraft ? (
+                        <input
+                          type="number"
+                          min={0}
+                          value={gdDraft.total_tepat_waktu}
+                          onChange={(e) =>
+                            setGdDraft((d) => (d ? { ...d, total_tepat_waktu: Number(e.target.value) } : d))
+                          }
+                          className={inputCls}
+                        />
+                      ) : (
+                        <p className="text-sm text-neutral-900">{l.total_tepat_waktu}</p>
+                      )}
+                    </div>
+                    <div>
+                      <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-neutral-400">
+                        Revisi
+                      </p>
+                      {editing && gdDraft ? (
+                        <input
+                          type="number"
+                          min={0}
+                          value={gdDraft.total_revisi}
+                          onChange={(e) =>
+                            setGdDraft((d) => (d ? { ...d, total_revisi: Number(e.target.value) } : d))
+                          }
+                          className={inputCls}
+                        />
+                      ) : (
+                        <p className="text-sm text-neutral-900">{l.total_revisi}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="hidden overflow-x-auto rounded-2xl border border-black/[0.06] bg-white shadow-[0_1px_2px_rgba(16,15,10,0.04),0_10px_28px_-16px_rgba(16,15,10,0.22)] sm:block">
         <table className="w-full text-left text-sm">
           <thead className="bg-cream-100/70 text-[11px] font-semibold uppercase tracking-wide text-neutral-500">
             <tr>
@@ -400,13 +633,6 @@ export function ActivityLogTable({
             </tr>
           </thead>
           <tbody>
-            {logs.length === 0 && (
-              <tr>
-                <td className="px-3 py-4 text-neutral-400" colSpan={6}>
-                  Belum ada entri bulan ini.
-                </td>
-              </tr>
-            )}
             {logs.map((l) => {
               const editing = editingId === l.id;
               return (
@@ -482,14 +708,169 @@ export function ActivityLogTable({
             })}
           </tbody>
         </table>
-      </div>
+        </div>
+      </>
     );
   }
 
   if (role === "host_live") {
     const logs = hostLiveLogs ?? [];
+    if (logs.length === 0) {
+      return (
+        <div className="rounded-2xl border border-black/[0.06] bg-white p-4 text-sm text-neutral-400 shadow-[0_1px_2px_rgba(16,15,10,0.04),0_10px_28px_-16px_rgba(16,15,10,0.22)]">
+          Belum ada entri bulan ini.
+        </div>
+      );
+    }
     return (
-      <div className="overflow-x-auto rounded-2xl border border-black/[0.06] bg-white shadow-[0_1px_2px_rgba(16,15,10,0.04),0_10px_28px_-16px_rgba(16,15,10,0.22)]">
+      <>
+        <div className="space-y-3 sm:hidden">
+          {logs.map((l) => {
+            const editing = editingId === l.id;
+            return (
+              <div
+                key={l.id}
+                className="rounded-2xl border border-black/[0.06] bg-white p-3.5 shadow-[0_1px_2px_rgba(16,15,10,0.04),0_10px_28px_-16px_rgba(16,15,10,0.22)]"
+              >
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="text-xs font-semibold text-neutral-500">{formatDate(l.tanggal)}</span>
+                  <RowActions
+                    editing={editing}
+                    pending={pending}
+                    onEdit={() => startEditHl(l)}
+                    onSave={() => saveHl(l)}
+                    onCancel={cancelEdit}
+                  />
+                </div>
+
+                <div className="space-y-2.5">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-neutral-400">Jam</p>
+                      {editing && hlDraft ? (
+                        <input
+                          value={hlDraft.jam_live}
+                          onChange={(e) => setHlDraft((d) => (d ? { ...d, jam_live: e.target.value } : d))}
+                          className={inputCls}
+                        />
+                      ) : (
+                        <p className="text-sm text-neutral-900">{l.jam_live || "-"}</p>
+                      )}
+                    </div>
+                    <div>
+                      <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-neutral-400">
+                        Durasi
+                      </p>
+                      {editing && hlDraft ? (
+                        <input
+                          type="number"
+                          min={0}
+                          value={hlDraft.durasi_jam}
+                          onChange={(e) =>
+                            setHlDraft((d) => (d ? { ...d, durasi_jam: Number(e.target.value) } : d))
+                          }
+                          className={inputCls}
+                        />
+                      ) : (
+                        <p className="text-sm text-neutral-900">{l.durasi_jam}j</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-neutral-400">Konsep</p>
+                    {editing && hlDraft ? (
+                      <input
+                        value={hlDraft.konsep}
+                        onChange={(e) => setHlDraft((d) => (d ? { ...d, konsep: e.target.value } : d))}
+                        className={inputCls}
+                      />
+                    ) : (
+                      <p className="text-sm text-neutral-700">{l.konsep || "-"}</p>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-neutral-400">
+                        Views
+                      </p>
+                      {editing && hlDraft ? (
+                        <input
+                          type="number"
+                          min={0}
+                          value={hlDraft.unique_views}
+                          onChange={(e) =>
+                            setHlDraft((d) => (d ? { ...d, unique_views: Number(e.target.value) } : d))
+                          }
+                          className={inputCls}
+                        />
+                      ) : (
+                        <p className="text-sm text-neutral-900">{l.unique_views}</p>
+                      )}
+                    </div>
+                    <div>
+                      <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-neutral-400">
+                        Followers
+                      </p>
+                      {editing && hlDraft ? (
+                        <input
+                          type="number"
+                          min={0}
+                          value={hlDraft.new_followers}
+                          onChange={(e) =>
+                            setHlDraft((d) => (d ? { ...d, new_followers: Number(e.target.value) } : d))
+                          }
+                          className={inputCls}
+                        />
+                      ) : (
+                        <p className="text-sm text-neutral-900">{l.new_followers}</p>
+                      )}
+                    </div>
+                    <div>
+                      <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-neutral-400">
+                        Leads
+                      </p>
+                      {editing && hlDraft ? (
+                        <input
+                          type="number"
+                          min={0}
+                          value={hlDraft.lead_masuk}
+                          onChange={(e) =>
+                            setHlDraft((d) => (d ? { ...d, lead_masuk: Number(e.target.value) } : d))
+                          }
+                          className={inputCls}
+                        />
+                      ) : (
+                        <p className="text-sm text-neutral-900">{l.lead_masuk}</p>
+                      )}
+                    </div>
+                    <div>
+                      <p className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-neutral-400">
+                        Video
+                      </p>
+                      {editing && hlDraft ? (
+                        <input
+                          type="number"
+                          min={0}
+                          value={hlDraft.jumlah_video}
+                          onChange={(e) =>
+                            setHlDraft((d) => (d ? { ...d, jumlah_video: Number(e.target.value) } : d))
+                          }
+                          className={inputCls}
+                        />
+                      ) : (
+                        <p className="text-sm text-neutral-900">{l.jumlah_video}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="hidden overflow-x-auto rounded-2xl border border-black/[0.06] bg-white shadow-[0_1px_2px_rgba(16,15,10,0.04),0_10px_28px_-16px_rgba(16,15,10,0.22)] sm:block">
         <table className="w-full text-left text-sm">
           <thead className="bg-cream-100/70 text-[11px] font-semibold uppercase tracking-wide text-neutral-500">
             <tr>
@@ -505,13 +886,6 @@ export function ActivityLogTable({
             </tr>
           </thead>
           <tbody>
-            {logs.length === 0 && (
-              <tr>
-                <td className="px-3 py-4 text-neutral-400" colSpan={9}>
-                  Belum ada entri bulan ini.
-                </td>
-              </tr>
-            )}
             {logs.map((l) => {
               const editing = editingId === l.id;
               return (
@@ -618,7 +992,8 @@ export function ActivityLogTable({
             })}
           </tbody>
         </table>
-      </div>
+        </div>
+      </>
     );
   }
 

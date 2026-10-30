@@ -14,10 +14,10 @@ export function KpiBar({
 
   return (
     <div className="space-y-1">
-      <div className="flex items-baseline justify-between gap-3">
+      <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="truncate text-sm font-medium text-neutral-900">{label}</p>
-          <p className="truncate text-xs text-neutral-500">{sublabel}</p>
+          <p className="text-xs text-neutral-500">{sublabel}</p>
         </div>
         <span className="shrink-0 text-sm font-semibold text-neutral-900">
           {Math.round(clamped)}%
