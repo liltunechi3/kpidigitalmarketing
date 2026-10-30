@@ -86,7 +86,7 @@ export function TeamActivityCalendar({ initial }: { initial: TeamCalendarData })
               <span className="rounded-full bg-accent-soft px-2.5 py-1 text-[11px] font-medium text-neutral-800">
                 Terisi {selected.filledCount}
               </span>
-              <span className="rounded-full bg-red-50 px-2.5 py-1 text-[11px] font-medium text-red-600">
+              <span className="rounded-full bg-[#a8503f]/10 px-2.5 py-1 text-[11px] font-medium text-[#a8503f]">
                 Belum Isi {selected.missedCount}
               </span>
             </div>
@@ -109,7 +109,7 @@ export function TeamActivityCalendar({ initial }: { initial: TeamCalendarData })
                     : isFilled
                       ? "border-accent/40 bg-accent-soft font-semibold text-neutral-900"
                       : isMissed
-                        ? "border-red-100 bg-red-50/70 text-red-500"
+                        ? "border-[#a8503f]/15 bg-[#a8503f]/[0.06] text-[#a8503f]"
                         : "border-black/[0.04] bg-cream-50/60 text-neutral-500"
                 } ${cell.isToday ? "ring-2 ring-ink/70" : ""}`;
 

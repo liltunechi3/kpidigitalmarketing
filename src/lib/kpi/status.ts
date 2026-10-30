@@ -1,9 +1,9 @@
 export type ScoreStatus = "good" | "warning" | "critical";
 
 export const STATUS_COLOR: Record<ScoreStatus, string> = {
-  good: "#0ca30c",
-  warning: "#fab219",
-  critical: "#d03b3b",
+  good: "#5a7a5e",
+  warning: "#b8863f",
+  critical: "#a8503f",
 };
 
 export const STATUS_LABEL: Record<ScoreStatus, string> = {

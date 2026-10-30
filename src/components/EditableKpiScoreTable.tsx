@@ -65,7 +65,7 @@ export function EditableKpiScoreTable({
       >
         {pending ? "Menyimpan..." : "Simpan Perubahan"}
       </button>
-      {saved && !pending && <span className="text-sm text-emerald-600">Tersimpan ✓</span>}
+      {saved && !pending && <span className="text-sm text-[#5a7a5e]">Tersimpan ✓</span>}
       <p className="w-full text-xs text-neutral-500">
         Admin bisa mengoreksi nilai Realisasi secara manual, misalnya data dari luar sistem atau koreksi laporan.
       </p>

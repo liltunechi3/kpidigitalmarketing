@@ -56,7 +56,7 @@ export function UserRoleRow({ profile, isSelf }: { profile: Profile; isSelf: boo
           >
             {pending ? "..." : "Simpan"}
           </button>
-          {saved && !pending && <span className="text-xs text-emerald-600">✓</span>}
+          {saved && !pending && <span className="text-xs text-[#5a7a5e]">✓</span>}
         </div>
       </td>
     </tr>

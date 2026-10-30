@@ -136,7 +136,7 @@ export function ContentCreatorForm({
         >
           {pending ? "Menyimpan..." : "Simpan"}
         </button>
-        {saved && !pending && <span className="text-sm text-emerald-600">Tersimpan ✓</span>}
+        {saved && !pending && <span className="text-sm text-[#5a7a5e]">Tersimpan ✓</span>}
       </div>
     </div>
   );
