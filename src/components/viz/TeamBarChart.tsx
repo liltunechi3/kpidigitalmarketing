@@ -21,7 +21,7 @@ export function TeamBarChart({
     <div className="space-y-3 rounded-2xl border border-black/[0.06] bg-white shadow-[0_1px_2px_rgba(16,15,10,0.04),0_10px_28px_-16px_rgba(16,15,10,0.22)] p-5">
       {sorted.map((d) => {
         const percent = d.percent ?? 0;
-        const color = d.percent === null ? "#c3c2b7" : STATUS_COLOR[scoreStatus(percent)];
+        const color = d.percent === null ? "#c7cdd7" : STATUS_COLOR[scoreStatus(percent)];
         return (
           <Link
             key={d.id}

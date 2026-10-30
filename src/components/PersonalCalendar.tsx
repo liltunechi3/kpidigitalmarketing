@@ -42,7 +42,7 @@ export function PersonalCalendar({ initial }: { initial: PersonalCalendarData })
           <span className="rounded-full bg-accent-soft px-2.5 py-1 text-[11px] font-medium text-neutral-800">
             Terisi {data.filledCount}
           </span>
-          <span className="rounded-full bg-[#a8503f]/10 px-2.5 py-1 text-[11px] font-medium text-[#a8503f]">
+          <span className="rounded-full bg-[#131c2e]/10 px-2.5 py-1 text-[11px] font-medium text-[#131c2e]">
             Belum Isi {data.missedCount}
           </span>
           <span className="rounded-full bg-cream-100 px-2.5 py-1 text-[11px] font-medium text-neutral-500">
@@ -67,7 +67,7 @@ export function PersonalCalendar({ initial }: { initial: PersonalCalendarData })
                 : isFilled
                   ? "border-accent/40 bg-accent-soft font-semibold text-neutral-900"
                   : isMissed
-                    ? "border-[#a8503f]/15 bg-[#a8503f]/[0.06] text-[#a8503f]"
+                    ? "border-[#131c2e]/15 bg-[#131c2e]/[0.06] text-[#131c2e]"
                     : "border-black/[0.04] bg-cream-50/60 text-neutral-500"
             } ${cell.isToday ? "ring-2 ring-ink/70" : ""}`;
 

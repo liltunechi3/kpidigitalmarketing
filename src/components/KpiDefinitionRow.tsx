@@ -61,7 +61,7 @@ export function KpiDefinitionRow({ def }: { def: KpiDefinition }) {
           >
             {pending ? "..." : "Simpan"}
           </button>
-          {saved && !pending && <span className="text-xs text-[#5a7a5e]">✓</span>}
+          {saved && !pending && <span className="text-xs text-[#3d5278]">✓</span>}
         </div>
       </td>
     </tr>

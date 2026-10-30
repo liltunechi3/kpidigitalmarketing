@@ -113,7 +113,7 @@ export function HostLiveForm({
                       </button>
                       <button
                         onClick={() => handleDelete(s.id)}
-                        className="text-xs text-[#a8503f] underline"
+                        className="text-xs text-[#131c2e] underline"
                       >
                         Hapus
                       </button>
@@ -247,7 +247,7 @@ export function HostLiveForm({
               Batal
             </button>
           )}
-          {saved && !pending && <span className="text-sm text-[#5a7a5e]">Tersimpan ✓</span>}
+          {saved && !pending && <span className="text-sm text-[#3d5278]">Tersimpan ✓</span>}
         </div>
       </div>
     </div>
