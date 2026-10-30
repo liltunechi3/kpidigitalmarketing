@@ -9,11 +9,10 @@ import {
   monthRange,
   lastNMonths,
   daysUntil,
-  todayISO,
-  buildPeriodWeeks,
 } from "@/lib/date";
 import { ROLE_LABELS } from "@/lib/roles";
 import { scoreForProfile } from "@/lib/kpi/teamScores";
+import { fetchPersonalCalendar, fetchTeamCalendar } from "@/lib/kpi/calendarData";
 import { scoreStatus, STATUS_COLOR, STATUS_LABEL, meetsKkm, KKM_THRESHOLD } from "@/lib/kpi/status";
 import { ScoreGauge } from "@/components/viz/ScoreGauge";
 import { KpiBar } from "@/components/viz/KpiBar";
@@ -21,7 +20,7 @@ import { StatTile } from "@/components/viz/StatTile";
 import { MonthlyTrendChart } from "@/components/viz/MonthlyTrendChart";
 import { TeamBarChart, type TeamBarDatum } from "@/components/viz/TeamBarChart";
 import { PersonalCalendar } from "@/components/PersonalCalendar";
-import { TeamActivityCalendar, type CalendarMember } from "@/components/TeamActivityCalendar";
+import { TeamActivityCalendar } from "@/components/TeamActivityCalendar";
 import {
   IconChecklist,
   IconChart,
@@ -33,9 +32,7 @@ import {
   IconAlert,
   IconChevronRight,
 } from "@/components/icons";
-import type { KpiDefinition, Profile, TeamRole } from "@/lib/supabase/types";
-
-const DAILY_LOG_ROLES: TeamRole[] = ["content_creator", "graphic_designer", "host_live"];
+import type { KpiDefinition, Profile } from "@/lib/supabase/types";
 
 function Greeting() {
   const h = new Date().getHours();
@@ -55,52 +52,18 @@ export default async function DashboardHomePage() {
   const supabase = await createClient();
 
   if (profile.role === "head_digital_marketing") {
-    const today = todayISO();
-    const [hodStart, hodEnd] = monthRange(anchorDate);
-    const [{ data: profiles }, { data: defs }, { data: hodInput }, { data: ccLogs }, { data: gdLogs }, { data: hlLogs }] =
-      await Promise.all([
-        supabase.from("profiles").select("*").order("full_name", { ascending: true }),
-        supabase.from("kpi_definitions").select("*"),
-        supabase
-          .from("monthly_hod_input")
-          .select("id")
-          .eq("user_id", userId)
-          .eq("periode", periode)
-          .maybeSingle(),
-        supabase.from("log_content_creator").select("user_id, tanggal").gte("tanggal", hodStart).lte("tanggal", hodEnd),
-        supabase.from("log_graphic_designer").select("user_id, tanggal").gte("tanggal", hodStart).lte("tanggal", hodEnd),
-        supabase.from("log_host_live").select("user_id, tanggal").gte("tanggal", hodStart).lte("tanggal", hodEnd),
-      ]);
+    const [{ data: profiles }, { data: defs }, { data: hodInput }, teamCalendar] = await Promise.all([
+      supabase.from("profiles").select("*").order("full_name", { ascending: true }),
+      supabase.from("kpi_definitions").select("*"),
+      supabase
+        .from("monthly_hod_input")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("periode", periode)
+        .maybeSingle(),
+      fetchTeamCalendar(bulan),
+    ]);
     const definitions = (defs as KpiDefinition[]) ?? [];
-
-    const datesByUser = new Map<string, Set<string>>();
-    for (const row of [...(ccLogs ?? []), ...(gdLogs ?? []), ...(hlLogs ?? [])] as {
-      user_id: string;
-      tanggal: string;
-    }[]) {
-      const set = datesByUser.get(row.user_id) ?? new Set<string>();
-      set.add(row.tanggal);
-      datesByUser.set(row.user_id, set);
-    }
-    const calendarWeeks = buildPeriodWeeks(hodStart, hodEnd, today);
-    const totalPeriodDays = calendarWeeks.flat().filter((c) => c.inPeriod).length;
-    const calendarMembers: CalendarMember[] = ((profiles as Profile[]) ?? []).map((p) => {
-      const hasDailyLog = DAILY_LOG_ROLES.includes(p.role);
-      const filledDates = Array.from(datesByUser.get(p.id) ?? []);
-      const missedCount = hasDailyLog
-        ? calendarWeeks.flat().filter((c) => c.inPeriod && c.iso <= today && !filledDates.includes(c.iso)).length
-        : 0;
-      return {
-        id: p.id,
-        fullName: p.full_name,
-        roleLabel: ROLE_LABELS[p.role],
-        hasDailyLog,
-        filledDates,
-        filledCount: filledDates.length,
-        missedCount,
-        totalPeriodDays,
-      };
-    });
 
     const rows = await Promise.all(
       ((profiles as Profile[]) ?? []).map(async (p) => {
@@ -196,27 +159,18 @@ export default async function DashboardHomePage() {
           </div>
         </div>
 
-        <TeamActivityCalendar members={calendarMembers} weeks={calendarWeeks} todayIso={today} bulan={bulan} />
+        <TeamActivityCalendar initial={teamCalendar} />
       </div>
     );
   }
 
   // Staff dashboard (content_creator / graphic_designer / host_live)
-  const [start, end] = monthRange(anchorDate);
-  const logTable =
-    profile.role === "content_creator"
-      ? "log_content_creator"
-      : profile.role === "graphic_designer"
-        ? "log_graphic_designer"
-        : "log_host_live";
-
-  const today = todayISO();
-  const [{ data: defs }, { data: logDates }] = await Promise.all([
+  const [{ data: defs }, personalCalendar] = await Promise.all([
     supabase.from("kpi_definitions").select("*").eq("role", profile.role).order("urutan", { ascending: true }),
-    supabase.from(logTable).select("tanggal").eq("user_id", userId).gte("tanggal", start).lte("tanggal", end),
+    fetchPersonalCalendar(userId, profile.role, bulan),
   ]);
   const definitions = (defs as KpiDefinition[]) ?? [];
-  const filledDates = Array.from(new Set(((logDates as { tanggal: string }[]) ?? []).map((r) => r.tanggal)));
+  const { filledDates, todayIso: today } = personalCalendar;
 
   const months = lastNMonths(anchorDate, 6);
   const [result, trend] = await Promise.all([
@@ -233,12 +187,6 @@ export default async function DashboardHomePage() {
   const overallPercent = result.totalBobot > 0 ? (result.total / result.totalBobot) * 100 : 0;
   const filledToday = filledDates.includes(today);
   const topKpis = result.rows.slice(0, 3);
-
-  const calendarWeeks = buildPeriodWeeks(start, end, today);
-  const totalPeriodDays = calendarWeeks.flat().filter((c) => c.inPeriod).length;
-  const missedCount = calendarWeeks
-    .flat()
-    .filter((c) => c.inPeriod && c.iso <= today && !filledDates.includes(c.iso)).length;
 
   return (
     <div className="space-y-5">
@@ -316,14 +264,7 @@ export default async function DashboardHomePage() {
         </div>
       </div>
 
-      <PersonalCalendar
-        weeks={calendarWeeks}
-        filledDates={filledDates}
-        todayIso={today}
-        filledCount={filledDates.length}
-        missedCount={missedCount}
-        totalPeriodDays={totalPeriodDays}
-      />
+      <PersonalCalendar initial={personalCalendar} />
 
       <MonthlyTrendChart points={trend} />
     </div>
